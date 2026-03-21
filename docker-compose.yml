@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  supabase:
+    image: supabase/postgres:15.3
+    container_name: vadya50-supabase
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      SUPABASE_PASSWORD: supabase
+      JWT_SECRET: "super-secret-jwt-token-change-in-production"
+    ports:
+      - "54322:5432"  # Local port 54322 -> Container 5432
+    volumes:
+      - supabase-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: vadya50-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+
+volumes:
+  supabase-data:
+  redis-data:
