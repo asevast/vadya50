@@ -24,13 +24,7 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "double",
-      "trailingComma": "es5"
-    }
-  },
-  "typescript": {
-    "formatter": {
-      "quoteStyle": "double",
-      "trailingComma": "es5"
+      "trailingCommas": "es5"
     }
   }
 }

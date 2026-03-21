@@ -4,7 +4,7 @@ CREATE TYPE congratulation_type AS ENUM ('text', 'audio', 'video');
 -- Create table for congratulations
 CREATE TABLE congratulations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  slug TEXT UNIQUE NOT NULL DEFAULT nanoui(8),
+  slug TEXT UNIQUE NOT NULL,
   author_name TEXT NOT NULL,
   type congratulation_type NOT NULL,
   message TEXT,

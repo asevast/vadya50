@@ -1,5 +1,5 @@
-import HeroSection from "@/components/hero/HeroSection";
 import CongratulationForm from "@/components/congratulation-form/CongratulationForm";
+import HeroSection from "@/components/hero/HeroSection";
 
 export default function Home() {
   return (

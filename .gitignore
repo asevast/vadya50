@@ -10,6 +10,8 @@ dist/
 
 # Testing
 coverage/
+playwright-report/
+test-results/
 
 # Environment variables
 .env
@@ -40,3 +42,4 @@ logs
 
 # Misc
 .cache/
+*.tsbuildinfo

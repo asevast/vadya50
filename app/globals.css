@@ -5,19 +5,56 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-background-primary: #0A0A0F;
-  --color-gold: #FFD700;
-  --color-electric-blue: #00D4FF;
+  --color-background-primary: #0a0a0f;
+  --color-gold: #ffd700;
+  --color-electric-blue: #00d4ff;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html,
 body {
-  background-color: var(--color-background-primary);
   color: white;
   font-family: var(--font-sans), system-ui, sans-serif;
+  min-height: 100%;
+}
+
+body {
+  background-color: #07090f !important;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: -1;
+  background:
+    radial-gradient(40% 32% at 22% 28%, rgba(23, 37, 84, 0.65), rgba(23, 37, 84, 0) 62%),
+    radial-gradient(36% 28% at 76% 26%, rgba(30, 58, 138, 0.55), rgba(30, 58, 138, 0) 60%),
+    radial-gradient(40% 30% at 55% 72%, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0) 58%),
+    radial-gradient(30% 26% at 10% 78%, rgba(17, 24, 39, 0.8), rgba(17, 24, 39, 0) 60%);
+  filter: blur(40px) saturate(140%);
+  opacity: 0.85;
+  transform: translate3d(0, 0, 0) scale(1.05);
+  animation: праздничныйПоток 26s ease-in-out infinite;
+  pointer-events: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(120deg, rgba(8, 11, 18, 0.55), rgba(12, 18, 34, 0.25)),
+    linear-gradient(220deg, rgba(10, 15, 28, 0.5), rgba(7, 9, 15, 0.35));
+  opacity: 0.7;
+  animation: праздничныйСдвиг 32s ease-in-out infinite;
+  pointer-events: none;
 }
 
 @theme inline {
@@ -137,9 +174,75 @@ body {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: transparent !important;
   }
   html {
     @apply font-sans;
+    background-color: transparent !important;
+  }
+}
+/* Glassmorphism card */
+.glass-card {
+  background: rgba(10, 10, 15, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Font variables */
+.font-display {
+  font-family: var(--font-display), serif;
+}
+
+.text-gold {
+  color: var(--color-gold);
+}
+
+/* Объемный текст */
+.объемный-текст {
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.12),
+    0 2px 0 rgba(0, 0, 0, 0.25),
+    0 8px 18px rgba(0, 0, 0, 0.45),
+    0 18px 40px rgba(0, 0, 0, 0.55);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes праздничныйПоток {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.05);
+  }
+  50% {
+    transform: translate3d(-4%, 3%, 0) scale(1.12);
+  }
+  100% {
+    transform: translate3d(3%, -2%, 0) scale(1.05);
+  }
+}
+
+@keyframes праздничныйСдвиг {
+  0% {
+    opacity: 0.55;
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    opacity: 0.75;
+    transform: translate3d(1.5%, -1.5%, 0);
+  }
+  100% {
+    opacity: 0.6;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none !important;
   }
 }
