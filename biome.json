@@ -1,7 +1,14 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "files": {
-    "ignore": ["node_modules", ".next", "dist", "coverage"]
+    "ignore": [
+      "node_modules",
+      ".next",
+      "dist",
+      "coverage",
+      "public/fonts/helvetiker_bold.typeface.json",
+      "test-results"
+    ]
   },
   "formatter": {
     "enabled": true,

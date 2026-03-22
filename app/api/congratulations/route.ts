@@ -1,10 +1,10 @@
+import { проверкаЛимита } from "@/lib/rate-limit";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { uploadFile } from "@/lib/supabase/storage";
 import { sendTelegramNotification } from "@/lib/telegram";
 import { congratulationSchema } from "@/lib/validations";
-import { проверкаЛимита } from "@/lib/rate-limit";
-import { type NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {

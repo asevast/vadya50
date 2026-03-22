@@ -19,7 +19,7 @@ test.describe("Интеграция с базой данных", () => {
 
     const ответ = await ожиданиеОтвета;
     const статус = ответ.status();
-    const тело = await ответ.json().catch(() => ({} as { slug?: string }));
+    const тело = (await ответ.json().catch(() => ({}))) as { slug?: string };
     if (статус !== 201) {
       throw new Error(`Ошибка API: ${статус} ${JSON.stringify(тело)}`);
     }

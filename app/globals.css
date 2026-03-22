@@ -32,8 +32,7 @@ body::before {
   position: fixed;
   inset: -20%;
   z-index: -1;
-  background:
-    radial-gradient(40% 32% at 22% 28%, rgba(23, 37, 84, 0.65), rgba(23, 37, 84, 0) 62%),
+  background: radial-gradient(40% 32% at 22% 28%, rgba(23, 37, 84, 0.65), rgba(23, 37, 84, 0) 62%),
     radial-gradient(36% 28% at 76% 26%, rgba(30, 58, 138, 0.55), rgba(30, 58, 138, 0) 60%),
     radial-gradient(40% 30% at 55% 72%, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0) 58%),
     radial-gradient(30% 26% at 10% 78%, rgba(17, 24, 39, 0.8), rgba(17, 24, 39, 0) 60%);
@@ -49,8 +48,7 @@ body::after {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background:
-    linear-gradient(120deg, rgba(8, 11, 18, 0.55), rgba(12, 18, 34, 0.25)),
+  background: linear-gradient(120deg, rgba(8, 11, 18, 0.55), rgba(12, 18, 34, 0.25)),
     linear-gradient(220deg, rgba(10, 15, 28, 0.5), rgba(7, 9, 15, 0.35));
   opacity: 0.7;
   animation: праздничныйСдвиг 32s ease-in-out infinite;
@@ -201,11 +199,8 @@ body::after {
 
 /* Объемный текст */
 .объемный-текст {
-  text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.12),
-    0 2px 0 rgba(0, 0, 0, 0.25),
-    0 8px 18px rgba(0, 0, 0, 0.45),
-    0 18px 40px rgba(0, 0, 0, 0.55);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.12), 0 2px 0 rgba(0, 0, 0, 0.25), 0 8px 18px
+    rgba(0, 0, 0, 0.45), 0 18px 40px rgba(0, 0, 0, 0.55);
 }
 
 /* Smooth scrolling */

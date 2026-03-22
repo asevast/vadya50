@@ -88,7 +88,9 @@ export default function AudioTab({ form }: AudioTabProps) {
         const blob = new Blob(chunksRef.current, { type: "audio/webm" });
         const url = URL.createObjectURL(blob);
         handleMediaRecorded(blob, url);
-        stream.getTracks().forEach((track) => track.stop());
+        for (const track of stream.getTracks()) {
+          track.stop();
+        }
       };
 
       mediaRecorder.start();
@@ -161,7 +163,15 @@ export default function AudioTab({ form }: AudioTabProps) {
                 onClick={clearAudio}
                 className="rounded-full"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  role="img"
+                  aria-label="Удалить запись"
+                >
+                  <title>Удалить запись</title>
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"

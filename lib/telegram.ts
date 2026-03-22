@@ -1,5 +1,5 @@
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN!;
-const TELEGRAM_CHANNEL_ID = process.env.TELEGRAM_CHANNEL_ID!;
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHANNEL_ID = process.env.TELEGRAM_CHANNEL_ID;
 
 export async function sendTelegramNotification(data: {
   type: "text" | "audio" | "video";
@@ -15,7 +15,7 @@ export async function sendTelegramNotification(data: {
 
   const apiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
 
-  let text = `🎉 Новое поздравление!\n\n`;
+  let text = "🎉 Новое поздравление!\n\n";
   text += `👤 Автор: ${data.authorName}\n`;
   text += `📝 Тип: ${data.type}\n`;
   if (data.message) {

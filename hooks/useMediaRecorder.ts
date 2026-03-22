@@ -56,7 +56,9 @@ export default function useMediaRecorder(type: MediaType): UseMediaRecorderRetur
         setMediaUrl(url);
 
         if (streamRef.current) {
-          streamRef.current.getTracks().forEach((track) => track.stop());
+          for (const track of streamRef.current.getTracks()) {
+            track.stop();
+          }
         }
       };
 

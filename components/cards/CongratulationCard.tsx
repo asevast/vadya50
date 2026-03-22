@@ -43,7 +43,7 @@ export default function CongratulationCard({ data }: CardProps) {
 
   const messagePreview = data.message
     ? data.message.length > 150
-      ? data.message.substring(0, 150) + "..."
+      ? `${data.message.substring(0, 150)}...`
       : data.message
     : "Нет сообщения";
 
@@ -55,8 +55,11 @@ export default function CongratulationCard({ data }: CardProps) {
             src={data.media_url}
             className="w-full h-full object-cover"
             muted
+            tabIndex={0}
             onMouseOver={(e) => e.currentTarget.play()}
             onMouseOut={(e) => e.currentTarget.pause()}
+            onFocus={(e) => e.currentTarget.play()}
+            onBlur={(e) => e.currentTarget.pause()}
           />
           <div className="absolute top-2 right-2 bg-black/60 p-2 rounded-full">{getTypeIcon()}</div>
         </div>

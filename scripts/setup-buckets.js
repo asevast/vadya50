@@ -1,4 +1,4 @@
-import { readFile } from "fs/promises";
+import { readFile } from "node:fs/promises";
 import { createClient } from "@supabase/supabase-js";
 
 async function loadEnv() {
@@ -34,13 +34,24 @@ if (!supabaseUrl || !supabaseKey) {
 console.log("🔧 Connecting to Supabase...");
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const buckets = [{
-  name: "congratulations-audio",
-  options: { public: true, fileSizeLimit: 50 * 1024 * 1024, allowedMimeTypes: ["audio/webm", "audio/mp3", "audio/ogg"] },
-},{
-  name: "congratulations-video",
-  options: { public: true, fileSizeLimit: 50 * 1024 * 1024, allowedMimeTypes: ["video/webm", "video/mp4"] },
-}];
+const buckets = [
+  {
+    name: "congratulations-audio",
+    options: {
+      public: true,
+      fileSizeLimit: 50 * 1024 * 1024,
+      allowedMimeTypes: ["audio/webm", "audio/mp3", "audio/ogg"],
+    },
+  },
+  {
+    name: "congratulations-video",
+    options: {
+      public: true,
+      fileSizeLimit: 50 * 1024 * 1024,
+      allowedMimeTypes: ["video/webm", "video/mp4"],
+    },
+  },
+];
 
 async function createBuckets() {
   for (const bucket of buckets) {

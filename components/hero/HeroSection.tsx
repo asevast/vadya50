@@ -2,10 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import Countdown from "./Countdown";
-import ParticlesBackground from "./Particles";
 import dynamic from "next/dynamic";
 import ФоноваяКарусель from "./BackgroundCarousel";
+import Countdown from "./Countdown";
+import ParticlesBackground from "./Particles";
 
 const Fifty3DComponent = dynamic(() => import("./Fifty3D"), {
   ssr: false,

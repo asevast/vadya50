@@ -56,6 +56,7 @@ export default function AudioPlayer({ src, duration }: AudioPlayerProps) {
       <div ref={containerRef} className="mb-3" />
       <div className="flex items-center justify-between text-sm text-gray-300">
         <button
+          type="button"
           onClick={togglePlayback}
           className="flex items-center gap-2 text-gold hover:text-yellow-400 transition-colors"
         >
@@ -64,7 +65,7 @@ export default function AudioPlayer({ src, duration }: AudioPlayerProps) {
         </button>
         <div className="flex items-center gap-2">
           <Volume2 className="w-4 h-4" />
-          <span>{duration ? Math.floor(duration) + " сек" : "..."}</span>
+          <span>{duration ? `${Math.floor(duration)} сек` : "..."}</span>
         </div>
       </div>
     </div>
