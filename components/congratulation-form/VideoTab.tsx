@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import type { CongratulationFormData } from "@/lib/validations";
-import { Pause, Play, Upload, X, Video } from "lucide-react";
+import { Pause, Play, Upload, Video, X } from "lucide-react";
 import { type ChangeEvent, type DragEvent, useEffect, useRef, useState } from "react";
-import { type UseFormReturn } from "react-hook-form";
+import type { UseFormReturn } from "react-hook-form";
 
 interface VideoTabProps {
   form: UseFormReturn<CongratulationFormData>;
@@ -39,7 +39,9 @@ export default function VideoTab({ form }: VideoTabProps) {
         URL.revokeObjectURL(recordedUrlRef.current);
       }
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
+        for (const track of streamRef.current.getTracks()) {
+          track.stop();
+        }
       }
     };
   }, []);
@@ -143,7 +145,9 @@ export default function VideoTab({ form }: VideoTabProps) {
         form.setValue("media_file", файл);
 
         if (streamRef.current) {
-          streamRef.current.getTracks().forEach((track) => track.stop());
+          for (const track of streamRef.current.getTracks()) {
+            track.stop();
+          }
         }
       };
 
@@ -197,9 +201,7 @@ export default function VideoTab({ form }: VideoTabProps) {
             </Button>
           </div>
           {!canRecord && (
-            <p className="text-xs text-gray-500 mt-3">
-              Запись видео недоступна в этом браузере.
-            </p>
+            <p className="text-xs text-gray-500 mt-3">Запись видео недоступна в этом браузере.</p>
           )}
           {recordingError && <p className="text-sm text-red-400 mt-3">{recordingError}</p>}
           <input
@@ -219,7 +221,15 @@ export default function VideoTab({ form }: VideoTabProps) {
               className="w-full max-h-[300px] object-contain"
               onPlay={() => setIsPlaying(true)}
               onPause={() => setIsPlaying(false)}
-            />
+            >
+              <track
+                kind="captions"
+                src="/captions/empty.vtt"
+                srcLang="ru"
+                label="Русские"
+                default
+              />
+            </video>
             <div className="absolute bottom-4 right-4 flex gap-2">
               <Button
                 type="button"

@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
+import { NextResponse } from "next/server";
 
 const ROOT = process.env.PHOTO_ROOT || "C:\\vadya\\photo";
 
@@ -12,10 +12,7 @@ const MIME_BY_EXT: Record<string, string> = {
   ".gif": "image/gif",
 };
 
-export async function GET(
-  _request: Request,
-  { params }: { params: Promise<{ path: string[] }> }
-) {
+export async function GET(_request: Request, { params }: { params: Promise<{ path: string[] }> }) {
   try {
     const { path } = await params;
     const безопасныйПуть = normalize(path.join("/")).replace(/^(\.\.(\/|\\|$))+/, "");

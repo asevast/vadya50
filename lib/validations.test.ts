@@ -46,7 +46,7 @@ describe("congratulationSchema", () => {
   it("should reject invalid type", () => {
     const data = {
       author_name: "Alice",
-      type: "invalid" as any,
+      type: "invalid" as unknown as "text" | "audio" | "video",
     };
     const result = congratulationSchema.safeParse(data);
     expect(result.success).toBe(false);

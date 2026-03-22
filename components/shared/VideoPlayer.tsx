@@ -75,11 +75,20 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
         src={src}
         poster={poster}
         className="w-full max-h-[400px] object-contain bg-black"
+        tabIndex={0}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={() => setIsPlaying(false)}
         onClick={togglePlayback}
-      />
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            togglePlayback();
+          }
+        }}
+      >
+        <track kind="captions" src="/captions/empty.vtt" srcLang="ru" label="Русские" default />
+      </video>
 
       {/* Controls */}
       <div className="p-3 space-y-2">
@@ -96,6 +105,7 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
+              type="button"
               onClick={togglePlayback}
               className="text-gold hover:text-yellow-400 transition-colors"
             >
@@ -121,6 +131,7 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
           </div>
 
           <button
+            type="button"
             onClick={toggleFullscreen}
             className="text-gray-300 hover:text-white transition-colors"
           >

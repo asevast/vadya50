@@ -1,7 +1,7 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
 import { Center, Text3D } from "@react-three/drei";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Suspense, useEffect, useRef, useState } from "react";
 import type { Mesh } from "three";
 
@@ -40,7 +40,13 @@ function Пятьдесят({
         curveSegments={24}
       >
         50
-        <meshStandardMaterial color="#FFE8B0" metalness={0.9} roughness={0.2} emissive="#2a1f0a" emissiveIntensity={0.35} />
+        <meshStandardMaterial
+          color="#FFE8B0"
+          metalness={0.9}
+          roughness={0.2}
+          emissive="#2a1f0a"
+          emissiveIntensity={0.35}
+        />
       </Text3D>
     </Center>
   );
@@ -95,7 +101,9 @@ export default function Fifty3DComponent() {
   if (!поддержкаWebGL) {
     return (
       <div className="h-[320px] sm:h-[360px] md:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center">
-        <div className="text-[5rem] font-display" style={{ color: "#FFE8B0" }}>50</div>
+        <div className="text-[5rem] font-display" style={{ color: "#FFE8B0" }}>
+          50
+        </div>
       </div>
     );
   }

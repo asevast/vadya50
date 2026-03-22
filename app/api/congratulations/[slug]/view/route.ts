@@ -1,10 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
-export async function POST(
-  _request: Request,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function POST(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const { slug } = await params;
 
