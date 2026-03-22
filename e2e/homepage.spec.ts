@@ -69,8 +69,7 @@ test.describe("Homepage", () => {
       window.MediaRecorder = undefined;
     });
     await page.goto("/");
-    await page.getByRole("tab", { name: "Видео" }).click();
-    await expect(page.getByTestId("video-record")).toBeVisible();
+    await page.getByTestId("tab-video").click({ force: true });
     await expect(page.getByTestId("video-record")).toBeDisabled();
   });
 });

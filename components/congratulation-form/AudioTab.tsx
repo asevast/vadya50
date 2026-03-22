@@ -155,12 +155,13 @@ export default function AudioTab({ form }: AudioTabProps) {
                 size="lg"
                 onClick={isRecording ? stopRecording : startRecording}
                 data-testid="audio-record"
+                aria-label={isRecording ? "Остановить запись" : "Начать запись"}
                 className={`rounded-full w-16 h-16 ${isRecording ? "bg-red-500 hover:bg-red-600" : "bg-gold text-black hover:bg-yellow-400"}`}
               >
                 {isRecording ? <Square className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
               </Button>
               <div className="text-sm text-gray-400">
-                {isRecording ? "Запись..." : "Нажмите для записи"}
+                {isRecording ? "Запись..." : "Начать запись"}
               </div>
               <input
                 ref={fileInputRef}

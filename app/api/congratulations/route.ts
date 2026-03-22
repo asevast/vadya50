@@ -15,10 +15,16 @@ export async function POST(request: NextRequest) {
       "unknown";
 
     const лимит = await проверкаЛимита(`rate-limit:${ip}:congratulations`);
+    const rateLimitHeaders = {
+      "X-RateLimit-Limit": лимит.limit.toString(),
+      "X-RateLimit-Remaining": лимит.remaining.toString(),
+      "X-RateLimit-Reset": лимит.reset.toString(),
+    };
+
     if (!лимит.success) {
       return NextResponse.json(
         { error: "Слишком много запросов. Попробуйте позже." },
-        { status: 429 }
+        { status: 429, headers: rateLimitHeaders }
       );
     }
 
@@ -118,7 +124,7 @@ export async function POST(request: NextRequest) {
         share_url: `${process.env.NEXT_PUBLIC_APP_URL}/congratulations/${slug}`,
         created_at: newCongratulation.created_at,
       },
-      { status: 201 }
+      { status: 201, headers: rateLimitHeaders }
     );
   } catch (error) {
     if (error instanceof ZodError) {

@@ -19,11 +19,11 @@ export const congratulationSchema = z
   .object({
     author_name: z
       .string()
-      .min(1, "Имя обязательно")
-      .max(maxNameLength, `Имя не должно превышать ${maxNameLength} символов`)
+      .min(1, "Имя автора обязательно")
+      .max(maxNameLength, `Имя автора не должно превышать ${maxNameLength} символов`)
       .regex(
         /^[a-zA-Zа-яА-Я\s'-]+$/,
-        "Имя может содержать только буквы, пробелы, дефисы и апострофы"
+        "Имя автора может содержать только буквы, пробелы, дефисы и апострофы"
       ),
     type: z.enum(["text", "audio", "video"]),
     message: z

@@ -17,8 +17,6 @@ export default function CongratulationForm() {
   const [activeTab, setActiveTab] = useState<string>("text");
   const { submitCongratulation, isLoading, error, slug, shareUrl } = useCongratulation();
   const [submitResult, setSubmitResult] = useState<{ slug: string; shareUrl: string } | null>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-  const submitRef = useRef<HTMLButtonElement>(null);
 
   const form = useForm<CongratulationFormData>({
     resolver: zodResolver(congratulationSchema),
@@ -42,40 +40,8 @@ export default function CongratulationForm() {
     }
   };
 
-
   // Watch the type to update the form type value
   const watchType = form.watch("type");
-
-  useEffect(() => {
-    const formEl = formRef.current;
-    if (!formEl) return;
-    const handler = (event: Event) => {
-      event.preventDefault();
-      form.handleSubmit(onSubmit)();
-    };
-    formEl.addEventListener("submit", handler);
-    return () => {
-      formEl.removeEventListener("submit", handler);
-    };
-  }, [form, onSubmit]);
-
-  useEffect(() => {
-    const buttonEl = submitRef.current;
-    const formEl = formRef.current;
-    if (!buttonEl || !formEl) return;
-    const clickHandler = () => {
-      formEl.requestSubmit();
-    };
-    const touchHandler = () => {
-      formEl.requestSubmit();
-    };
-    buttonEl.addEventListener("click", clickHandler);
-    buttonEl.addEventListener("touchend", touchHandler);
-    return () => {
-      buttonEl.removeEventListener("click", clickHandler);
-      buttonEl.removeEventListener("touchend", touchHandler);
-    };
-  }, []);
 
   return (
     <div
@@ -99,6 +65,10 @@ export default function CongratulationForm() {
               role="tab"
               aria-selected={activeTab === tab.key}
               onClick={() => setActiveTab(tab.key)}
+              onPointerUp={() => setActiveTab(tab.key)}
+              onMouseDown={() => setActiveTab(tab.key)}
+              onTouchStart={() => setActiveTab(tab.key)}
+              data-testid={`tab-${tab.key}`}
               className={cn(
                 "relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center rounded-md px-1.5 py-0.5 text-sm font-medium transition-all",
                 "text-foreground/60 hover:text-foreground",
@@ -110,7 +80,7 @@ export default function CongratulationForm() {
           ))}
         </div>
 
-        <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-6">
           {/* Author name - common for all types */}
           <div>
             <label htmlFor="author_name" className="block text-sm font-medium mb-2">
@@ -158,7 +128,6 @@ export default function CongratulationForm() {
             <button
               type="submit"
               disabled={form.formState.isSubmitting}
-              ref={submitRef}
               data-testid="submit-button"
               className="flex-1 rounded-lg bg-gold text-black hover:bg-yellow-400 text-lg py-6 transition-colors disabled:opacity-50 disabled:pointer-events-none"
             >

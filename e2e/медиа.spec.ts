@@ -19,7 +19,7 @@ test.describe("Медиа", () => {
     });
 
     await page.goto("/");
-    await page.getByRole("tab", { name: "Аудио" }).click({ force: true });
+    await page.getByTestId("tab-audio").click({ force: true });
 
     await page.evaluate(() => {
       const input = document.querySelector<HTMLInputElement>('[data-testid="audio-file"]');
@@ -51,7 +51,7 @@ test.describe("Медиа", () => {
     });
 
     await page.goto("/");
-    await page.getByRole("tab", { name: "Видео" }).click({ force: true });
+    await page.getByTestId("tab-video").click({ force: true });
 
     await page.evaluate(() => {
       const input = document.querySelector<HTMLInputElement>('[data-testid="video-file"]');

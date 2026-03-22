@@ -201,6 +201,7 @@ export default function VideoTab({ form }: VideoTabProps) {
               disabled={!canRecord}
               className="gap-2"
               data-testid="video-record"
+              aria-label={isRecording ? "Остановить запись" : "Записать видео"}
             >
               <Video className="w-4 h-4" />
               {isRecording ? "Остановить запись" : "Записать видео"}

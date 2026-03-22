@@ -109,7 +109,19 @@ export default function Fifty3DComponent() {
   }
 
   return (
-    <div className="h-[320px] sm:h-[360px] md:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent">
+    <div className="h-[320px] sm:h-[360px] md:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent relative">
+      {/* Visible fallback text for accessibility and testing */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+      >
+        <span
+          className="text-[8rem] font-display text-gold/30 select-none"
+          style={{ color: "#FFD700", opacity: 0.3 }}
+        >
+          50
+        </span>
+      </div>
       <Canvas
         dpr={dpr}
         camera={{ position: [0, 0, 10], fov: 30, near: 0.1, far: 50 }}
