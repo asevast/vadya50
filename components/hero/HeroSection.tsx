@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 import ФоноваяКарусель from "./BackgroundCarousel";
 import Countdown from "./Countdown";
 import ParticlesBackground from "./Particles";
@@ -19,13 +20,31 @@ const Fifty3DComponent = dynamic(() => import("./Fifty3D"), {
 export default function HeroSection() {
   // Target: April 2, 2026 10:00 GMT+3 (MSK)
   const targetDate = new Date("2026-04-02T10:00:00+03:00");
+  const [безТяжелыхЭффектов, установитьБезТяжелыхЭффектов] = useState(false);
+
+  useEffect(() => {
+    const агент = typeof navigator !== "undefined" ? navigator.userAgent : "";
+    const этоIOS = /iPad|iPhone|iPod/i.test(агент);
+    const уменьшенноеДвижение =
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const слабоеУстройство =
+      typeof navigator !== "undefined" &&
+      (("deviceMemory" in navigator && (navigator as Navigator & { deviceMemory?: number }).deviceMemory && (navigator as Navigator & { deviceMemory?: number }).deviceMemory! <= 2) ||
+        ("hardwareConcurrency" in navigator && navigator.hardwareConcurrency <= 4));
+
+    if (этоIOS || уменьшенноеДвижение || слабоеУстройство) {
+      установитьБезТяжелыхЭффектов(true);
+    }
+  }, []);
 
   return (
     <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
       {/* Particles background */}
       <div className="absolute inset-0">
         <ФоноваяКарусель />
-        <ParticlesBackground />
+        {!безТяжелыхЭффектов && <ParticlesBackground />}
       </div>
 
       {/* Content */}
@@ -70,7 +89,13 @@ export default function HeroSection() {
           transition={{ duration: 0.8 }}
           className="flex justify-center"
         >
-          <Fifty3DComponent />
+          {безТяжелыхЭффектов ? (
+            <div className="h-[320px] sm:h-[360px] md:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center">
+              <div className="text-[5rem] font-display text-gold">50</div>
+            </div>
+          ) : (
+            <Fifty3DComponent />
+          )}
         </motion.div>
       </div>
     </section>
