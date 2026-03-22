@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   // Enable React strict mode
   reactStrictMode: true,
 
+  // Allow LAN host in dev for HMR
+  allowedDevOrigins: ["192.168.1.39"],
+
   async rewrites() {
     return [
       {

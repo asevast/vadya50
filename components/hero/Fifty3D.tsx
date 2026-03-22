@@ -123,6 +123,7 @@ export default function Fifty3DComponent() {
         </span>
       </div>
       <Canvas
+        data-testid="fifty3d-canvas"
         dpr={dpr}
         camera={{ position: [0, 0, 10], fov: 30, near: 0.1, far: 50 }}
         gl={{ antialias: !малыйЭкран, powerPreference: "low-power", alpha: true }}

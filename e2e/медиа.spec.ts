@@ -33,7 +33,8 @@ test.describe("Медиа", () => {
       input.dispatchEvent(new Event("change", { bubbles: true }));
     });
 
-    await expect(page.getByTestId("audio-delete")).toBeVisible();
+    // Wait for the delete button to appear (React re-render)
+    await expect(page.getByTestId("audio-delete")).toBeVisible({ timeout: 5000 });
 
     await page.fill("#author_name", "Тест аудио");
     await page.getByRole("button", { name: "Отправить" }).click();
@@ -65,7 +66,8 @@ test.describe("Медиа", () => {
       input.dispatchEvent(new Event("change", { bubbles: true }));
     });
 
-    await expect(page.getByTestId("video-preview")).toBeVisible();
+    // Wait for the video preview to appear (React re-render)
+    await expect(page.getByTestId("video-preview")).toBeVisible({ timeout: 5000 });
 
     await page.fill("#author_name", "Тест видео");
     await page.getByRole("button", { name: "Отправить" }).click();

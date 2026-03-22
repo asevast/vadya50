@@ -36,8 +36,8 @@ test.describe("vadya50 bugs detection", () => {
       await page.goto("http://localhost:3004/");
       await page.waitForTimeout(2000);
 
-      // Look for canvas element (Three.js renders to canvas)
-      const canvas = page.locator("canvas");
+      // Look for the specific Three.js canvas using data-testid
+      const canvas = page.getByTestId("fifty3d-canvas");
       await expect(canvas).toBeVisible({ timeout: 10000 });
     });
 

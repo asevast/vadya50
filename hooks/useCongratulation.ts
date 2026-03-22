@@ -19,6 +19,8 @@ export default function useCongratulation(): UseCongratulationReturn {
   const [slug, setSlug] = useState<string | null>(null);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
 
+  const isIOS = typeof navigator !== "undefined" && /iPad|iPhone|iPod/i.test(navigator.userAgent);
+
   const submitCongratulation = async (data: CongratulationFormData) => {
     setIsLoading(true);
     setError(null);
@@ -29,15 +31,39 @@ export default function useCongratulation(): UseCongratulationReturn {
       let response: Response;
 
       if (type === "text") {
-        response = await fetch("/api/congratulations", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            author_name: data.author_name || "",
-            type: "text",
-            message: data.message || "",
-          }),
-        });
+        if (isIOS) {
+          response = await new Promise<Response>((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "/api/congratulations");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onload = () => {
+              resolve(
+                new Response(xhr.responseText, {
+                  status: xhr.status,
+                  headers: { "Content-Type": xhr.getResponseHeader("Content-Type") || "" },
+                })
+              );
+            };
+            xhr.onerror = () => reject(new Error("XHR failed"));
+            xhr.send(
+              JSON.stringify({
+                author_name: data.author_name || "",
+                type: "text",
+                message: data.message || "",
+              })
+            );
+          });
+        } else {
+          response = await fetch("/api/congratulations", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              author_name: data.author_name || "",
+              type: "text",
+              message: data.message || "",
+            }),
+          });
+        }
       } else {
         if (!data.media_file) {
           throw new Error("Медиафайл обязателен");
