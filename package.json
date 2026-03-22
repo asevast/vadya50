@@ -12,7 +12,8 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "ux:аудит": "lhci autorun --config=./lighthouserc.json"
   },
   "keywords": [],
   "author": "",
@@ -61,6 +62,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.58.2",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
