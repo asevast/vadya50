@@ -4,8 +4,10 @@
   "description": "Интерактивное поздравление с 50-летием",
   "scripts": {
     "dev": "next dev",
+    "dev:lan": "next dev -p 3004 -H 0.0.0.0",
     "build": "next build",
     "start": "next start",
+    "start:lan": "next start -p 3004 -H 0.0.0.0",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "type-check": "tsc --noEmit",
