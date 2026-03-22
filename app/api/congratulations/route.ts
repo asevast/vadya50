@@ -5,6 +5,7 @@ import { sendTelegramNotification } from "@/lib/telegram";
 import { congratulationSchema } from "@/lib/validations";
 import { nanoid } from "nanoid";
 import { type NextRequest, NextResponse } from "next/server";
+import { ZodError } from "zod";
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,12 +22,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const formData = await request.formData();
-    const data = Object.fromEntries(formData.entries());
+    const contentType = request.headers.get("content-type") || "";
+    let data: Record<string, unknown> = {};
+    let mediaFile: File | undefined;
 
-    // Convert FormData to object for validation
-    const rawMedia = formData.get("media_file");
-    const mediaFile = rawMedia instanceof File ? rawMedia : undefined;
+    if (contentType.includes("application/json")) {
+      data = (await request.json()) as Record<string, unknown>;
+    } else {
+      const formData = await request.formData();
+      data = Object.fromEntries(formData.entries());
+      const rawMedia = formData.get("media_file");
+      mediaFile = rawMedia instanceof File ? rawMedia : undefined;
+    }
 
     const validatedData = congratulationSchema.parse({
       author_name: data.author_name,
@@ -114,8 +121,22 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
+    if (error instanceof ZodError) {
+      console.error("Validation error in POST /api/congratulations:", error.flatten());
+      return NextResponse.json(
+        { error: "Неверные данные", details: error.flatten() },
+        { status: 400 }
+      );
+    }
     console.error("Error in POST /api/congratulations:", error);
-    return NextResponse.json({ error: "Неверные данные или ошибка сервера" }, { status: 400 });
+    const debugMessage = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json(
+      {
+        error: "Неверные данные или ошибка сервера",
+        debug: process.env.NODE_ENV === "production" ? undefined : debugMessage,
+      },
+      { status: 400 }
+    );
   }
 }
 

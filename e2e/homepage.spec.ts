@@ -29,8 +29,8 @@ test.describe("Homepage", () => {
   test("should clear form on reset", async ({ page }) => {
     await page.goto("/");
     await page.fill("#author_name", "Иван");
-    await page.locator(".ProseMirror").click();
-    await page.keyboard.type("Тестовое сообщение");
+    await page.getByTestId("message-editor").click();
+    await page.getByTestId("message-editor").fill("Тестовое сообщение");
     await page.getByRole("button", { name: "Очистить" }).click();
     await expect(page.locator("#author_name")).toHaveValue("");
   });
@@ -50,10 +50,14 @@ test.describe("Homepage", () => {
     });
 
     await page.goto("/");
+    const ожидание = page.waitForResponse((resp) => {
+      return resp.url().includes("/api/congratulations") && resp.request().method() === "POST";
+    });
     await page.fill("#author_name", "Иван");
-    await page.locator(".ProseMirror").click();
-    await page.keyboard.type("Тестовое сообщение");
-    await page.getByRole("button", { name: "Отправить" }).click();
+    await page.getByTestId("message-editor").click();
+    await page.getByTestId("message-editor").fill("Тестовое сообщение");
+    await page.getByTestId("submit-button").click({ force: true });
+    await ожидание;
 
     await expect(page.getByText("Поздравление отправлено!")).toBeVisible();
     await expect(page.getByText("http://localhost:3004/congratulations/test1234")).toBeVisible();
@@ -66,6 +70,7 @@ test.describe("Homepage", () => {
     });
     await page.goto("/");
     await page.getByRole("tab", { name: "Видео" }).click();
-    await expect(page.getByRole("button", { name: "Записать видео" })).toBeDisabled();
+    await expect(page.getByTestId("video-record")).toBeVisible();
+    await expect(page.getByTestId("video-record")).toBeDisabled();
   });
 });

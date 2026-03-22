@@ -5,7 +5,14 @@ const maxAudioSize = 50 * 1024 * 1024; // 50MB
 const maxVideoSize = 200 * 1024 * 1024; // 200MB
 const maxMessageLength = 2000;
 const maxNameLength = 100;
-const allowedAudioTypes = ["audio/webm", "audio/mp3", "audio/ogg", "audio/mpeg"];
+const allowedAudioTypes = [
+  "audio/webm",
+  "audio/mp3",
+  "audio/ogg",
+  "audio/mpeg",
+  "audio/wav",
+  "audio/x-wav",
+];
 const allowedVideoTypes = ["video/webm", "video/mp4"];
 
 export const congratulationSchema = z

@@ -21,5 +21,10 @@ export async function проверкаЛимита(ключ: string) {
   if (!лимитер) {
     return { success: true };
   }
-  return лимитер.limit(ключ);
+  try {
+    return await лимитер.limit(ключ);
+  } catch (error) {
+    console.error("Rate limit check failed:", error);
+    return { success: true };
+  }
 }

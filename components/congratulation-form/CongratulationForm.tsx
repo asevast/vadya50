@@ -2,12 +2,12 @@
 
 import SuccessModal from "@/components/shared/SuccessModal";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 import useCongratulation from "@/hooks/useCongratulation";
 import { type CongratulationFormData, congratulationSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import AudioTab from "./AudioTab";
 import TextTab from "./TextTab";
@@ -17,6 +17,8 @@ export default function CongratulationForm() {
   const [activeTab, setActiveTab] = useState<string>("text");
   const { submitCongratulation, isLoading, error, slug, shareUrl } = useCongratulation();
   const [submitResult, setSubmitResult] = useState<{ slug: string; shareUrl: string } | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const submitRef = useRef<HTMLButtonElement>(null);
 
   const form = useForm<CongratulationFormData>({
     resolver: zodResolver(congratulationSchema),
@@ -40,8 +42,40 @@ export default function CongratulationForm() {
     }
   };
 
+
   // Watch the type to update the form type value
   const watchType = form.watch("type");
+
+  useEffect(() => {
+    const formEl = formRef.current;
+    if (!formEl) return;
+    const handler = (event: Event) => {
+      event.preventDefault();
+      form.handleSubmit(onSubmit)();
+    };
+    formEl.addEventListener("submit", handler);
+    return () => {
+      formEl.removeEventListener("submit", handler);
+    };
+  }, [form, onSubmit]);
+
+  useEffect(() => {
+    const buttonEl = submitRef.current;
+    const formEl = formRef.current;
+    if (!buttonEl || !formEl) return;
+    const clickHandler = () => {
+      formEl.requestSubmit();
+    };
+    const touchHandler = () => {
+      formEl.requestSubmit();
+    };
+    buttonEl.addEventListener("click", clickHandler);
+    buttonEl.addEventListener("touchend", touchHandler);
+    return () => {
+      buttonEl.removeEventListener("click", clickHandler);
+      buttonEl.removeEventListener("touchend", touchHandler);
+    };
+  }, []);
 
   return (
     <div
@@ -52,14 +86,31 @@ export default function CongratulationForm() {
         Вадя принимает
       </h2>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-black/30">
-          <TabsTrigger value="text">Текст</TabsTrigger>
-          <TabsTrigger value="audio">Аудио</TabsTrigger>
-          <TabsTrigger value="video">Видео</TabsTrigger>
-        </TabsList>
+      <div className="w-full">
+        <div role="tablist" className="grid w-full grid-cols-3 bg-black/30 rounded-lg p-[3px]">
+          {[
+            { key: "text", label: "Текст" },
+            { key: "audio", label: "Аудио" },
+            { key: "video", label: "Видео" },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={cn(
+                "relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center rounded-md px-1.5 py-0.5 text-sm font-medium transition-all",
+                "text-foreground/60 hover:text-foreground",
+                activeTab === tab.key && "bg-black/40 text-foreground"
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-6">
+        <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-6">
           {/* Author name - common for all types */}
           <div>
             <label htmlFor="author_name" className="block text-sm font-medium mb-2">
@@ -78,27 +129,41 @@ export default function CongratulationForm() {
             )}
           </div>
 
-          <TabsContent value="text" className="space-y-4 mt-4">
+          <div
+            className="space-y-4 mt-4"
+            hidden={activeTab !== "text"}
+            aria-hidden={activeTab !== "text"}
+          >
             <TextTab form={form} />
-          </TabsContent>
+          </div>
 
-          <TabsContent value="audio" className="space-y-4 mt-4">
+          <div
+            className="space-y-4 mt-4"
+            hidden={activeTab !== "audio"}
+            aria-hidden={activeTab !== "audio"}
+          >
             <AudioTab form={form} />
-          </TabsContent>
+          </div>
 
-          <TabsContent value="video" className="space-y-4 mt-4">
+          <div
+            className="space-y-4 mt-4"
+            hidden={activeTab !== "video"}
+            aria-hidden={activeTab !== "video"}
+          >
             <VideoTab form={form} />
-          </TabsContent>
+          </div>
 
           {/* Submit and Clear buttons */}
           <div className="flex gap-4 pt-4">
-            <Button
+            <button
               type="submit"
               disabled={form.formState.isSubmitting}
-              className="flex-1 bg-gold text-black hover:bg-yellow-400 text-lg py-6"
+              ref={submitRef}
+              data-testid="submit-button"
+              className="flex-1 rounded-lg bg-gold text-black hover:bg-yellow-400 text-lg py-6 transition-colors disabled:opacity-50 disabled:pointer-events-none"
             >
               {form.formState.isSubmitting ? "Отправка..." : "Отправить"}
-            </Button>
+            </button>
             <Button
               type="button"
               variant="outline"
@@ -110,7 +175,7 @@ export default function CongratulationForm() {
             </Button>
           </div>
         </form>
-      </Tabs>
+      </div>
 
       {/* Error display */}
       {error && (

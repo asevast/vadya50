@@ -24,30 +24,37 @@ export default function useCongratulation(): UseCongratulationReturn {
     setError(null);
 
     try {
-      const formData = new FormData();
+      const type = data.type || "text";
 
-      if (data.type === "text") {
-        formData.append("author_name", data.author_name);
-        formData.append("type", "text");
-        if (data.message) {
-          formData.append("message", data.message);
-        }
-      } else if (data.type === "audio" || data.type === "video") {
+      let response: Response;
+
+      if (type === "text") {
+        response = await fetch("/api/congratulations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            author_name: data.author_name || "",
+            type: "text",
+            message: data.message || "",
+          }),
+        });
+      } else {
         if (!data.media_file) {
           throw new Error("Медиафайл обязателен");
         }
-        formData.append("author_name", data.author_name);
-        formData.append("type", data.type);
-        if (data.message) {
+        const formData = new FormData();
+        formData.append("author_name", data.author_name || "");
+        formData.append("type", type);
+        if (data.message !== undefined) {
           formData.append("message", data.message);
         }
         formData.append("media_file", data.media_file);
-      }
 
-      const response = await fetch("/api/congratulations", {
-        method: "POST",
-        body: formData,
-      });
+        response = await fetch("/api/congratulations", {
+          method: "POST",
+          body: formData,
+        });
+      }
 
       const result = await response.json();
 

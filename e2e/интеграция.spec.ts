@@ -9,13 +9,13 @@ test.describe("Интеграция с базой данных", () => {
 
     await page.goto("/");
     await page.fill("#author_name", автор);
-    await page.locator(".ProseMirror").click();
-    await page.keyboard.type(сообщение);
+    await page.getByTestId("message-editor").click();
+    await page.getByTestId("message-editor").fill(сообщение);
     const ожиданиеОтвета = page.waitForResponse((resp) => {
       return resp.url().includes("/api/congratulations") && resp.request().method() === "POST";
     });
 
-    await page.getByRole("button", { name: "Отправить" }).click();
+    await page.getByTestId("submit-button").click({ force: true });
 
     const ответ = await ожиданиеОтвета;
     const статус = ответ.status();

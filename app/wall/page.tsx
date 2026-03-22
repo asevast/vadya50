@@ -95,10 +95,18 @@ export default function WallPage() {
         <div className="mb-8">
           <Tabs value={filter} onValueChange={(v) => setFilter(v as CongratulationType)}>
             <TabsList className="grid grid-cols-4 w-full max-w-md mx-auto bg-black/30">
-              <TabsTrigger value="all">Все</TabsTrigger>
-              <TabsTrigger value="text">Текст</TabsTrigger>
-              <TabsTrigger value="audio">Аудио</TabsTrigger>
-              <TabsTrigger value="video">Видео</TabsTrigger>
+              <TabsTrigger value="all" onClick={() => setFilter("all")}>
+                Все
+              </TabsTrigger>
+              <TabsTrigger value="text" onClick={() => setFilter("text")}>
+                Текст
+              </TabsTrigger>
+              <TabsTrigger value="audio" onClick={() => setFilter("audio")}>
+                Аудио
+              </TabsTrigger>
+              <TabsTrigger value="video" onClick={() => setFilter("video")}>
+                Видео
+              </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>

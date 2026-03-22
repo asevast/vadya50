@@ -17,6 +17,7 @@ export default function AudioTab({ form }: AudioTabProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize WaveSurfer when we have a URL
   useEffect(() => {
@@ -56,9 +57,18 @@ export default function AudioTab({ form }: AudioTabProps) {
 
   const handleMediaRecorded = (blob: Blob, url: string) => {
     setAudioUrl(url);
-    form.setValue("media_file", blob as File);
     // For display purposes, we'll create a file-like object
     const file = new File([blob], "audio.webm", { type: "audio/webm" });
+    form.setValue("media_file", file);
+  };
+
+  const handleFile = (file: File) => {
+    if (!file.type.startsWith("audio/")) {
+      alert("Пожалуйста, выберите аудиофайл");
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setAudioUrl(url);
     form.setValue("media_file", file);
   };
 
@@ -79,9 +89,7 @@ export default function AudioTab({ form }: AudioTabProps) {
       mediaRecorderRef.current = mediaRecorder;
 
       mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          chunksRef.current.push(event.data);
-        }
+        chunksRef.current.push(event.data);
       };
 
       mediaRecorder.onstop = () => {
@@ -93,7 +101,7 @@ export default function AudioTab({ form }: AudioTabProps) {
         }
       };
 
-      mediaRecorder.start();
+      mediaRecorder.start(1000);
       setIsRecording(true);
     } catch (err) {
       setRecordingError(err instanceof Error ? err.message : "Ошибка записи");
@@ -136,8 +144,17 @@ export default function AudioTab({ form }: AudioTabProps) {
             <>
               <Button
                 type="button"
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                data-testid="audio-select"
+              >
+                Загрузить файл
+              </Button>
+              <Button
+                type="button"
                 size="lg"
                 onClick={isRecording ? stopRecording : startRecording}
+                data-testid="audio-record"
                 className={`rounded-full w-16 h-16 ${isRecording ? "bg-red-500 hover:bg-red-600" : "bg-gold text-black hover:bg-yellow-400"}`}
               >
                 {isRecording ? <Square className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
@@ -145,6 +162,17 @@ export default function AudioTab({ form }: AudioTabProps) {
               <div className="text-sm text-gray-400">
                 {isRecording ? "Запись..." : "Нажмите для записи"}
               </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="audio/*"
+                data-testid="audio-file"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFile(file);
+                }}
+                className="hidden"
+              />
             </>
           ) : (
             <>
@@ -161,6 +189,7 @@ export default function AudioTab({ form }: AudioTabProps) {
                 size="icon"
                 variant="outline"
                 onClick={clearAudio}
+                data-testid="audio-delete"
                 className="rounded-full"
               >
                 <svg

@@ -186,7 +186,12 @@ export default function VideoTab({ form }: VideoTabProps) {
             Поддерживаемые форматы: MP4, WebM (макс. 200MB)
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
-            <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              data-testid="video-select"
+            >
               Выбрать файл
             </Button>
             <Button
@@ -195,6 +200,7 @@ export default function VideoTab({ form }: VideoTabProps) {
               onClick={isRecording ? остановитьЗапись : начатьЗапись}
               disabled={!canRecord}
               className="gap-2"
+              data-testid="video-record"
             >
               <Video className="w-4 h-4" />
               {isRecording ? "Остановить запись" : "Записать видео"}
@@ -208,6 +214,7 @@ export default function VideoTab({ form }: VideoTabProps) {
             ref={fileInputRef}
             type="file"
             accept="video/*"
+            data-testid="video-file"
             onChange={onFileSelect}
             className="hidden"
           />
@@ -219,6 +226,7 @@ export default function VideoTab({ form }: VideoTabProps) {
               ref={videoRef}
               src={videoUrl}
               className="w-full max-h-[300px] object-contain"
+              data-testid="video-preview"
               onPlay={() => setIsPlaying(true)}
               onPause={() => setIsPlaying(false)}
             >
@@ -245,6 +253,7 @@ export default function VideoTab({ form }: VideoTabProps) {
                 variant="outline"
                 className="rounded-full bg-black/50 hover:bg-black/70"
                 onClick={clearVideo}
+                data-testid="video-delete"
               >
                 <X className="w-5 h-5" />
               </Button>

@@ -3,7 +3,7 @@
 import type { CongratulationFormData } from "@/lib/validations";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { type UseFormReturn, useForm } from "react-hook-form";
 
 interface TextTabProps {
@@ -11,10 +11,26 @@ interface TextTabProps {
 }
 
 export default function TextTab({ form }: TextTabProps) {
+  const [useRichEditor, setUseRichEditor] = useState(true);
+
+  useEffect(() => {
+    if (typeof navigator === "undefined") return;
+    const ua = navigator.userAgent || "";
+    if (/iPad|iPhone|iPod/i.test(ua)) {
+      setUseRichEditor(false);
+    }
+  }, []);
+
   const editor = useEditor({
     extensions: [StarterKit],
     content: form.getValues("message") || "",
     immediatelyRender: false,
+    editorProps: {
+      attributes: {
+        "data-testid": "message-editor",
+        "aria-label": "Текст поздравления",
+      },
+    },
     onUpdate: ({ editor }) => {
       // For plain text, strip HTML tags
       const plainText = editor.getText();
@@ -23,11 +39,13 @@ export default function TextTab({ form }: TextTabProps) {
   });
 
   const focusEditor = () => {
+    if (!useRichEditor) return;
     editor?.chain().focus().run();
   };
 
   // Sync with form reset
   useEffect(() => {
+    if (!useRichEditor) return;
     const subscription = form.watch((value, { name }) => {
       if (name === "message" && editor) {
         const nextValue = value.message || "";
@@ -38,7 +56,7 @@ export default function TextTab({ form }: TextTabProps) {
     });
 
     return () => subscription.unsubscribe();
-  }, [editor, form]);
+  }, [editor, form, useRichEditor]);
 
   return (
     <div className="space-y-4">
@@ -47,19 +65,19 @@ export default function TextTab({ form }: TextTabProps) {
           Текст поздравления
         </label>
         <div className="border border-gray-700 rounded-lg overflow-hidden bg-black/30">
-          {editor ? (
+          {editor && useRichEditor ? (
             <div onClick={focusEditor} onKeyDown={focusEditor}>
               <EditorContent
                 editor={editor}
                 id="message-input"
                 className="prose prose-invert max-w-none p-4 min-h-[200px] focus:outline-none"
-                aria-label="Текст поздравления"
               />
             </div>
           ) : (
             <textarea
               {...form.register("message")}
               id="message-input"
+              data-testid="message-editor"
               className="w-full p-4 min-h-[200px] bg-transparent focus:outline-none"
               placeholder="Введите текст поздравления"
             />
