@@ -64,8 +64,12 @@ export async function POST(request: NextRequest) {
         media_url = uploadResult.url;
         media_key = uploadResult.path;
       } catch (uploadError) {
-        const message =
+        const rawMessage =
           uploadError instanceof Error ? uploadError.message : "Ошибка загрузки файла";
+        const mimeHint = rawMessage.includes("mime type")
+          ? " Добавьте mime-тип видео в настройках бакета Supabase (например, video/quicktime, video/mp4, video/webm)."
+          : "";
+        const message = `${rawMessage}${mimeHint}`;
         console.error("Upload error:", uploadError);
         return NextResponse.json({ error: "Ошибка загрузки файла", debug: message }, { status: 500 });
       }

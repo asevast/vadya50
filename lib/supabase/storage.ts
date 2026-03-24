@@ -8,10 +8,12 @@ const BUCKETS = {
 export async function uploadFile(file: File, bucket: keyof typeof BUCKETS, path?: string) {
   const fileName = `${Date.now()}_${file.name}`;
   const filePath = path ? `${path}/${fileName}` : fileName;
+  const contentType = file.type || undefined;
 
   const { data, error } = await supabaseAdmin.storage.from(BUCKETS[bucket]).upload(filePath, file, {
     cacheControl: "3600",
     upsert: false,
+    contentType,
   });
 
   if (error) {
