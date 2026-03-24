@@ -85,7 +85,13 @@ export default function useCongratulation(): UseCongratulationReturn {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Ошибка при отправке поздравления");
+        const details =
+          result?.details?.fieldErrors?.media_file?.[0] ||
+          result?.details?.fieldErrors?.author_name?.[0] ||
+          result?.details?.formErrors?.[0] ||
+          result?.debug;
+        const message = details ? `${result.error || "Ошибка"}: ${details}` : result.error;
+        throw new Error(message || "Ошибка при отправке поздравления");
       }
 
       setSlug(result.slug);

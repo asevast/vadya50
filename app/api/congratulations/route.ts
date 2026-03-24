@@ -59,9 +59,16 @@ export async function POST(request: NextRequest) {
     // Handle media upload
     if (validatedData.media_file) {
       const bucket = validatedData.type === "audio" ? "audio" : "video";
-      const uploadResult = await uploadFile(validatedData.media_file, bucket);
-      media_url = uploadResult.url;
-      media_key = uploadResult.path;
+      try {
+        const uploadResult = await uploadFile(validatedData.media_file, bucket);
+        media_url = uploadResult.url;
+        media_key = uploadResult.path;
+      } catch (uploadError) {
+        const message =
+          uploadError instanceof Error ? uploadError.message : "Ошибка загрузки файла";
+        console.error("Upload error:", uploadError);
+        return NextResponse.json({ error: "Ошибка загрузки файла", debug: message }, { status: 500 });
+      }
 
       // Get duration for audio/video (optional, would need to read file metadata)
       // For now, we'll skip duration extraction - would need ffprobe or similar

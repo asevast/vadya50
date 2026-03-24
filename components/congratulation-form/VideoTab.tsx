@@ -263,20 +263,24 @@ export default function VideoTab({ form }: VideoTabProps) {
                 <Button
                   type="button"
                   size="icon"
-                  className="rounded-full bg-black/60 hover:bg-black/80"
+                  className="rounded-full bg-black/70 hover:bg-black/80 text-gold shadow-lg shadow-black/40"
                   onClick={togglePlay}
                 >
-                  {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                  {isPlaying ? (
+                    <Pause className="w-5 h-5 text-gold" />
+                  ) : (
+                    <Play className="w-5 h-5 text-gold" />
+                  )}
                 </Button>
                 <Button
                   type="button"
                   size="icon"
                   variant="outline"
-                  className="rounded-full bg-black/60 hover:bg-black/80"
+                  className="rounded-full bg-black/70 hover:bg-black/80 text-gold border-gold/40 shadow-lg shadow-black/40"
                   onClick={clearVideo}
                   data-testid="video-delete"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-5 h-5 text-gold" />
                 </Button>
               </div>
             )}
