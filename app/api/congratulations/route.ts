@@ -1,6 +1,6 @@
 import { проверкаЛимита } from "@/lib/rate-limit";
 import { supabaseAdmin } from "@/lib/supabase/server";
-import { uploadFile } from "@/lib/supabase/storage";
+import { uploadFile, проверитьMimeБакета } from "@/lib/supabase/storage";
 import { sendTelegramNotification } from "@/lib/telegram";
 import { congratulationSchema } from "@/lib/validations";
 import { nanoid } from "nanoid";
@@ -59,6 +59,22 @@ export async function POST(request: NextRequest) {
     // Handle media upload
     if (validatedData.media_file) {
       const bucket = validatedData.type === "audio" ? "audio" : "video";
+      if (validatedData.type === "video") {
+        const проверка = await проверитьMimeБакета(bucket, [
+          "video/quicktime",
+          "video/mp4",
+          "video/webm",
+        ]);
+        if (!проверка.ok) {
+          return NextResponse.json(
+            {
+              error: "Бакет не принимает видео MIME-типы",
+              debug: проверка.message,
+            },
+            { status: 400 }
+          );
+        }
+      }
       try {
         const uploadResult = await uploadFile(validatedData.media_file, bucket);
         media_url = uploadResult.url;
