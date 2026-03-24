@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "./server";
+import { получитьSupabaseAdmin } from "./server";
 
 const BUCKETS = {
   audio: "congratulations-audio",
@@ -12,6 +12,7 @@ export async function uploadFile(file: File, bucket: keyof typeof BUCKETS, path?
   const filePath = path ? `${path}/${fileName}` : fileName;
   const contentType = file.type || undefined;
 
+  const supabaseAdmin = получитьSupabaseAdmin();
   const { data, error } = await supabaseAdmin.storage.from(BUCKETS[bucket]).upload(filePath, file, {
     cacheControl: "3600",
     upsert: false,
@@ -33,6 +34,7 @@ export async function uploadFile(file: File, bucket: keyof typeof BUCKETS, path?
 }
 
 export async function deleteFile(bucket: keyof typeof BUCKETS, path: string) {
+  const supabaseAdmin = получитьSupabaseAdmin();
   const { error } = await supabaseAdmin.storage.from(BUCKETS[bucket]).remove([path]);
 
   if (error) {
@@ -56,6 +58,7 @@ export async function проверитьMimeБакета(
     const путь = `mime-check/${имяФайла}`;
     const файл = new File([new Uint8Array([0])], имяФайла, { type: mime });
 
+    const supabaseAdmin = получитьSupabaseAdmin();
     const { error } = await supabaseAdmin.storage.from(BUCKETS[bucket]).upload(путь, файл, {
       cacheControl: "0",
       upsert: true,

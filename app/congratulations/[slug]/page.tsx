@@ -3,7 +3,7 @@ import ShareActions from "@/components/shared/ShareActions";
 import VideoPlayer from "@/components/shared/VideoPlayer";
 import ViewCounterBeacon from "@/components/shared/ViewCounterBeacon";
 import { Card, CardContent } from "@/components/ui/card";
-import { supabaseAdmin } from "@/lib/supabase/server";
+import { получитьSupabaseAdmin } from "@/lib/supabase/server";
 import { Calendar, User } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -15,6 +15,7 @@ interface PageProps {
 // Generate metadata for SEO
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
+  const supabaseAdmin = получитьSupabaseAdmin();
   const { data } = await supabaseAdmin
     .from("congratulations")
     .select("author_name, type, message")
@@ -42,6 +43,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function CongratulationsPage({ params }: PageProps) {
   const { slug } = await params;
 
+  const supabaseAdmin = получитьSupabaseAdmin();
   const { data: congratulation, error } = await supabaseAdmin
     .from("congratulations")
     .select("*")

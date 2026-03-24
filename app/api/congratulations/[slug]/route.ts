@@ -1,8 +1,9 @@
-import { supabaseAdmin } from "@/lib/supabase/server";
+import { получитьSupabaseAdmin } from "@/lib/supabase/server";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
+    const supabaseAdmin = получитьSupabaseAdmin();
     const { slug } = await params;
 
     const { data: congratulation, error } = await supabaseAdmin

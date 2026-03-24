@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { NextResponse } from "next/server";
 
-const ROOT = process.env.PHOTO_ROOT || "C:\\vadya\\photo";
+const ROOT = process.env.PHOTO_ROOT || join(process.cwd(), "photo");
 
 const MIME_BY_EXT: Record<string, string> = {
   ".jpg": "image/jpeg",
@@ -16,7 +16,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pat
   try {
     const { path } = await params;
     const безопасныйПуть = normalize(path.join("/")).replace(/^(\.\.(\/|\\|$))+/, "");
-    const целевойПуть = join(ROOT, безопасныйПуть);
+    const целевойПуть = join(/* turbopackIgnore: true */ ROOT, безопасныйПуть);
 
     if (!целевойПуть.startsWith(ROOT)) {
       return NextResponse.json({ error: "Неверный путь" }, { status: 400 });

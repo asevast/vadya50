@@ -1,5 +1,5 @@
 import { проверкаЛимита } from "@/lib/rate-limit";
-import { supabaseAdmin } from "@/lib/supabase/server";
+import { получитьSupabaseAdmin } from "@/lib/supabase/server";
 import { uploadFile, проверитьMimeБакета } from "@/lib/supabase/storage";
 import { sendTelegramNotification } from "@/lib/telegram";
 import { congratulationSchema } from "@/lib/validations";
@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
     const contentType = request.headers.get("content-type") || "";
     let data: Record<string, unknown> = {};
     let mediaFile: File | undefined;
+    const supabaseAdmin = получитьSupabaseAdmin();
 
     if (contentType.includes("application/json")) {
       data = (await request.json()) as Record<string, unknown>;
