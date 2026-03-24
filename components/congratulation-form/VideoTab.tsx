@@ -18,6 +18,8 @@ export default function VideoTab({ form }: VideoTabProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingError, setRecordingError] = useState<string | null>(null);
   const [canRecord, setCanRecord] = useState(false);
+  const [малыйЭкран, установитьМалыйЭкран] = useState(false);
+  const [нужныНативныеКонтролы, установитьНативныеКонтролы] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -31,6 +33,22 @@ export default function VideoTab({ form }: VideoTabProps) {
         !!navigator.mediaDevices?.getUserMedia &&
         typeof MediaRecorder !== "undefined"
     );
+  }, []);
+
+  useEffect(() => {
+    const запрос = window.matchMedia("(max-width: 480px)");
+    const обработчик = () => установитьМалыйЭкран(запрос.matches);
+    обработчик();
+    запрос.addEventListener("change", обработчик);
+    return () => запрос.removeEventListener("change", обработчик);
+  }, []);
+
+  useEffect(() => {
+    const ua = navigator.userAgent || "";
+    const isIOS =
+      /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    установитьНативныеКонтролы(isIOS);
   }, []);
 
   useEffect(() => {
@@ -228,6 +246,7 @@ export default function VideoTab({ form }: VideoTabProps) {
               src={videoUrl}
               className="w-full max-h-[300px] object-contain"
               data-testid="video-preview"
+              controls={малыйЭкран || нужныНативныеКонтролы}
               onPlay={() => setIsPlaying(true)}
               onPause={() => setIsPlaying(false)}
             >
@@ -239,26 +258,28 @@ export default function VideoTab({ form }: VideoTabProps) {
                 default
               />
             </video>
-            <div className="absolute bottom-4 right-4 flex gap-2">
-              <Button
-                type="button"
-                size="icon"
-                className="rounded-full bg-black/50 hover:bg-black/70"
-                onClick={togglePlay}
-              >
-                {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-              </Button>
-              <Button
-                type="button"
-                size="icon"
-                variant="outline"
-                className="rounded-full bg-black/50 hover:bg-black/70"
-                onClick={clearVideo}
-                data-testid="video-delete"
-              >
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
+            {!малыйЭкран && !нужныНативныеКонтролы && (
+              <div className="absolute bottom-4 right-4 z-10 flex gap-2">
+                <Button
+                  type="button"
+                  size="icon"
+                  className="rounded-full bg-black/60 hover:bg-black/80"
+                  onClick={togglePlay}
+                >
+                  {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                </Button>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="outline"
+                  className="rounded-full bg-black/60 hover:bg-black/80"
+                  onClick={clearVideo}
+                  data-testid="video-delete"
+                >
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+            )}
           </div>
           <div className="flex justify-between text-sm text-gray-400">
             <span>Длительность: {Math.floor(duration)} сек</span>
