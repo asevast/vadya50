@@ -1,5 +1,5 @@
 import type { Database } from "@/types/supabase";
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { type SupabaseClient, createClient } from "@supabase/supabase-js";
 
 let кэшАдминКлиента: SupabaseClient<Database, "public"> | null = null;
 
