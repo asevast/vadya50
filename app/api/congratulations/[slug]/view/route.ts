@@ -17,10 +17,11 @@ export async function POST(_request: Request, { params }: { params: Promise<{ sl
       return NextResponse.json({ error: "Поздравление не найдено" }, { status: 404 });
     }
 
-    await supabaseAdmin
-      .from("congratulations")
-      .update({ views_count: congratulation.views_count + 1 })
-      .eq("id", congratulation.id);
+    const обновление = {
+      views_count: (congratulation.views_count ?? 0) + 1,
+    } as Record<string, number>;
+
+    await supabaseAdmin.from("congratulations").update(обновление as any).eq("id", congratulation.id);
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch {
