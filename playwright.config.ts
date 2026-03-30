@@ -20,36 +20,37 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
-      browserName: "chromium",
-      permissions: ["microphone", "camera"],
-      launchOptions: {
-        args: [
-          "--use-fake-device-for-media-stream",
-          "--use-fake-ui-for-media-stream",
-          "--use-file-for-fake-audio-capture=./e2e/fixtures/fake-audio.wav",
-          "--use-file-for-fake-video-capture=./e2e/fixtures/fake-video.y4m",
-        ],
+      use: {
+        ...devices["Desktop Chrome"],
+        permissions: ["microphone", "camera"],
+        launchOptions: {
+          args: [
+            "--use-fake-device-for-media-stream",
+            "--use-fake-ui-for-media-stream",
+            "--use-file-for-fake-audio-capture=./e2e/fixtures/fake-audio.wav",
+            "--use-file-for-fake-video-capture=./e2e/fixtures/fake-video.y4m",
+          ],
+        },
       },
     },
     {
       name: "chromium-android",
-      use: { ...devices["Pixel 5"] },
-      browserName: "chromium",
-      permissions: ["microphone", "camera"],
-      launchOptions: {
-        args: [
-          "--use-fake-device-for-media-stream",
-          "--use-fake-ui-for-media-stream",
-          "--use-file-for-fake-audio-capture=./e2e/fixtures/fake-audio.wav",
-          "--use-file-for-fake-video-capture=./e2e/fixtures/fake-video.y4m",
-        ],
+      use: {
+        ...devices["Pixel 5"],
+        permissions: ["microphone", "camera"],
+        launchOptions: {
+          args: [
+            "--use-fake-device-for-media-stream",
+            "--use-fake-ui-for-media-stream",
+            "--use-file-for-fake-audio-capture=./e2e/fixtures/fake-audio.wav",
+            "--use-file-for-fake-video-capture=./e2e/fixtures/fake-video.y4m",
+          ],
+        },
       },
     },
     {
       name: "webkit-iphone",
       use: { ...devices["iPhone 12"] },
-      browserName: "webkit",
     },
   ],
 });
