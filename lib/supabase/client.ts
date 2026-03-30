@@ -1,5 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
+import { createClient } from "@supabase/supabase-js";
 
 const getEnv = (key: "NEXT_PUBLIC_SUPABASE_URL" | "NEXT_PUBLIC_SUPABASE_ANON_KEY") => {
   const value = process.env[key];

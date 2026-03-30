@@ -1,5 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
+import { createClient } from "@supabase/supabase-js";
 
 let кэшАдминКлиента: ReturnType<typeof createClient<Database>> | null = null;
 
