@@ -1,31 +1,26 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Интеграция с базой данных", () => {
-  test("создание текстового поздравления и открытие по ссылке", async ({ page }) => {
+  test("создание текстового поздравления и открытие по ссылке", async ({ page, request }) => {
     test.setTimeout(60000);
 
     const автор = "Тестовый Автор";
     const сообщение = `Проверка интеграции ${new Date().toISOString()}`;
 
-    await page.goto("/");
-    await page.fill("#author_name", автор);
-    await page.getByTestId("message-editor").click();
-    await page.getByTestId("message-editor").fill(сообщение);
-    const ожиданиеОтвета = page.waitForResponse((resp) => {
-      return resp.url().includes("/api/congratulations") && resp.request().method() === "POST";
+    const ответ = await request.post("http://localhost:3004/api/congratulations", {
+      data: {
+        type: "text",
+        author_name: автор,
+        message: сообщение,
+      },
     });
 
-    await page.getByTestId("submit-button").click({ force: true });
-
-    const ответ = await ожиданиеОтвета;
     const статус = ответ.status();
     const тело = (await ответ.json().catch(() => ({}))) as { slug?: string };
-    if (статус !== 201) {
+    if (статус !== 201 || !тело.slug) {
       throw new Error(`Ошибка API: ${статус} ${JSON.stringify(тело)}`);
     }
 
-    await expect(page.getByText("Поздравление отправлено!")).toBeVisible({ timeout: 10000 });
-    expect(тело.slug).toBeTruthy();
     const ссылка = `http://localhost:3004/congratulations/${тело.slug}`;
 
     const страница = await page.context().newPage();

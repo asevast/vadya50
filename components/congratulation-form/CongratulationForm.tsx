@@ -1,9 +1,9 @@
 "use client";
 
+import useCongratulation from "@/hooks/useCongratulation";
 import SuccessModal from "@/components/shared/SuccessModal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import useCongratulation from "@/hooks/useCongratulation";
 import { type CongratulationFormData, congratulationSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trash2 } from "lucide-react";

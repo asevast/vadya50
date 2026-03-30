@@ -29,9 +29,13 @@ export default function HeroSection() {
       typeof window !== "undefined" &&
       window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const памятьУстройства =
+      typeof navigator !== "undefined" && "deviceMemory" in navigator
+        ? (navigator as Navigator & { deviceMemory?: number }).deviceMemory
+        : undefined;
     const слабоеУстройство =
       typeof navigator !== "undefined" &&
-      (("deviceMemory" in navigator && (navigator as Navigator & { deviceMemory?: number }).deviceMemory && (navigator as Navigator & { deviceMemory?: number }).deviceMemory! <= 2) ||
+      ((памятьУстройства !== undefined && памятьУстройства <= 2) ||
         ("hardwareConcurrency" in navigator && navigator.hardwareConcurrency <= 4));
 
     if (этоIOS || уменьшенноеДвижение || слабоеУстройство) {
@@ -90,7 +94,10 @@ export default function HeroSection() {
           className="flex justify-center"
         >
           {безТяжелыхЭффектов ? (
-            <div className="h-[320px] sm:h-[360px] md:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center">
+            <div
+              data-testid="fifty3d-fallback"
+              className="h-[320px] sm:h-[360px] md:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center"
+            >
               <div className="text-[5rem] font-display text-gold">50</div>
             </div>
           ) : (

@@ -88,7 +88,10 @@ export async function POST(request: NextRequest) {
           : "";
         const message = `${rawMessage}${mimeHint}`;
         console.error("Upload error:", uploadError);
-        return NextResponse.json({ error: "Ошибка загрузки файла", debug: message }, { status: 500 });
+        return NextResponse.json(
+          { error: "Ошибка загрузки файла", debug: message },
+          { status: 500 }
+        );
       }
 
       // Get duration for audio/video (optional, would need to read file metadata)

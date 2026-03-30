@@ -9,7 +9,6 @@ const mockSuccess = {
 
 test.describe("Медиа", () => {
   test("аудио загрузка показывает запись и позволяет отправить", async ({ page }) => {
-
     await page.route("**/api/congratulations", async (route) => {
       await route.fulfill({
         status: 201,
@@ -104,9 +103,6 @@ test.describe("Стена", () => {
     await expect(page.getByText("Алексей")).toBeVisible();
 
     await page.getByRole("tab", { name: "Видео" }).click();
-    await expect(page.getByRole("tab", { name: "Видео" })).toHaveAttribute(
-      "aria-selected",
-      "true"
-    );
+    await expect(page.getByRole("tab", { name: "Видео" })).toHaveAttribute("aria-selected", "true");
   });
 });

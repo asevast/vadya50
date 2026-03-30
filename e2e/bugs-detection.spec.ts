@@ -20,10 +20,7 @@ test.describe("vadya50 bugs detection", () => {
 
       // Filter out expected warnings
       const criticalErrors = errors.filter(
-        (e) =>
-          !e.includes("THREE.Clock") &&
-          !e.includes("deprecated") &&
-          !e.includes("favicon")
+        (e) => !e.includes("THREE.Clock") && !e.includes("deprecated") && !e.includes("favicon")
       );
 
       console.log("Console errors found:", criticalErrors);
@@ -36,9 +33,10 @@ test.describe("vadya50 bugs detection", () => {
       await page.goto("http://localhost:3004/");
       await page.waitForTimeout(2000);
 
-      // Look for the specific Three.js canvas using data-testid
-      const canvas = page.getByTestId("fifty3d-canvas");
-      await expect(canvas).toBeVisible({ timeout: 10000 });
+      const canvasOrFallback = page.locator(
+        "[data-testid='fifty3d-canvas'], [data-testid='fifty3d-fallback']"
+      );
+      await expect(canvasOrFallback.first()).toBeVisible({ timeout: 10000 });
     });
 
     test("should have golden 50 text visible", async ({ page }) => {
@@ -66,7 +64,7 @@ test.describe("vadya50 bugs detection", () => {
 
       // Click back to Text
       await page.getByRole("tab", { name: "Текст" }).click();
-      await expect(page.locator(".ProseMirror")).toBeVisible();
+      await expect(page.getByTestId("message-editor")).toBeVisible();
     });
 
     test("should validate required fields", async ({ page }) => {
@@ -82,8 +80,8 @@ test.describe("vadya50 bugs detection", () => {
 
     test("should show validation error when name is empty but message is filled", async ({ page }) => {
       await page.goto("http://localhost:3004/");
-      await page.locator(".ProseMirror").click();
-      await page.keyboard.type("Тестовое сообщение для Вади");
+      await page.getByTestId("message-editor").click();
+      await page.getByTestId("message-editor").fill("Тестовое сообщение для Вади");
 
       await page.getByRole("button", { name: "Отправить" }).click();
 
@@ -101,8 +99,8 @@ test.describe("vadya50 bugs detection", () => {
         const response = await request.post("http://localhost:3004/api/congratulations", {
           data: {
             type: "text",
-            author_name: "Test" + i,
-            content: "Test message " + i,
+            author_name: `Test${i}`,
+            content: `Test message ${i}`,
           },
         });
 
@@ -186,7 +184,9 @@ test.describe("vadya50 bugs detection", () => {
       await page.waitForTimeout(2000);
 
       // Check for grid container
-      const gridContainer = page.locator("[class*='masonry'], [class*='grid'], [data-testid='wall-grid']");
+      const gridContainer = page.locator(
+        "[class*='masonry'], [class*='grid'], [data-testid='wall-grid']"
+      );
       await expect(gridContainer.first()).toBeVisible({ timeout: 10000 });
     });
   });

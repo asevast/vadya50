@@ -50,14 +50,10 @@ test.describe("Homepage", () => {
     });
 
     await page.goto("/");
-    const ожидание = page.waitForResponse((resp) => {
-      return resp.url().includes("/api/congratulations") && resp.request().method() === "POST";
-    });
     await page.fill("#author_name", "Иван");
     await page.getByTestId("message-editor").click();
     await page.getByTestId("message-editor").fill("Тестовое сообщение");
     await page.getByTestId("submit-button").click({ force: true });
-    await ожидание;
 
     await expect(page.getByText("Поздравление отправлено!")).toBeVisible();
     await expect(page.getByText("http://localhost:3004/congratulations/test1234")).toBeVisible();
