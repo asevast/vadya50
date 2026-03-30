@@ -1,13 +1,18 @@
 import { получитьSupabaseAdmin } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
+type ЗаписьПоздравления = {
+  id: string;
+  views_count: number | null;
+};
+
 export async function POST(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const supabaseAdmin = получитьSupabaseAdmin();
     const { slug } = await params;
 
     const { data: congratulation, error } = await supabaseAdmin
-      .from("congratulations")
+      .from<ЗаписьПоздравления>("congratulations")
       .select("id, views_count")
       .eq("slug", slug)
       .eq("is_approved", true)
@@ -19,9 +24,12 @@ export async function POST(_request: Request, { params }: { params: Promise<{ sl
 
     const обновление = {
       views_count: (congratulation.views_count ?? 0) + 1,
-    } as Record<string, number>;
+    };
 
-    await supabaseAdmin.from("congratulations").update(обновление as any).eq("id", congratulation.id);
+    await supabaseAdmin
+      .from<ЗаписьПоздравления>("congratulations")
+      .update(обновление)
+      .eq("id", congratulation.id);
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch {

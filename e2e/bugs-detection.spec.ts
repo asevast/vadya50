@@ -78,7 +78,9 @@ test.describe("vadya50 bugs detection", () => {
       await expect(validationMessage.first()).toBeVisible({ timeout: 5000 });
     });
 
-    test("should show validation error when name is empty but message is filled", async ({ page }) => {
+    test("should show validation error when name is empty but message is filled", async ({
+      page,
+    }) => {
       await page.goto("http://localhost:3004/");
       await page.getByTestId("message-editor").click();
       await page.getByTestId("message-editor").fill("Тестовое сообщение для Вади");

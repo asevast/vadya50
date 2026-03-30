@@ -1,8 +1,8 @@
 "use client";
 
-import useCongratulation from "@/hooks/useCongratulation";
 import SuccessModal from "@/components/shared/SuccessModal";
 import { Button } from "@/components/ui/button";
+import useCongratulation from "@/hooks/useCongratulation";
 import { cn } from "@/lib/utils";
 import { type CongratulationFormData, congratulationSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
