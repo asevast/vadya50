@@ -95,7 +95,13 @@ test.describe("vadya50 bugs detection", () => {
   test.describe("4. Rate Limiting", () => {
     test("should return 429 after too many requests", async ({ request }) => {
       let rateLimited = false;
-      const имена = ["Тестовый Автор А", "Тестовый Автор Б", "Тестовый Автор В", "Тестовый Автор Г", "Тестовый Автор Д"];
+      const имена = [
+        "Тестовый Автор А",
+        "Тестовый Автор Б",
+        "Тестовый Автор В",
+        "Тестовый Автор Г",
+        "Тестовый Автор Д",
+      ];
 
       // Make 5 rapid requests (limit is 3 per hour)
       for (let i = 0; i < 5; i++) {
