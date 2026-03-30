@@ -95,14 +95,18 @@ test.describe("vadya50 bugs detection", () => {
   test.describe("4. Rate Limiting", () => {
     test("should return 429 after too many requests", async ({ request }) => {
       let rateLimited = false;
+      const имена = ["Тестовый Автор А", "Тестовый Автор Б", "Тестовый Автор В", "Тестовый Автор Г", "Тестовый Автор Д"];
 
       // Make 5 rapid requests (limit is 3 per hour)
       for (let i = 0; i < 5; i++) {
         const response = await request.post("http://localhost:3004/api/congratulations", {
+          headers: {
+            "x-forwarded-for": "10.0.0.2",
+          },
           data: {
             type: "text",
-            author_name: `Test${i}`,
-            content: `Test message ${i}`,
+            author_name: имена[i],
+            message: `Тестовое сообщение ${i}`,
           },
         });
 
@@ -152,10 +156,13 @@ test.describe("vadya50 bugs detection", () => {
     test("should display created congratulation", async ({ page, request }) => {
       // First create a congratulation via API
       const createResponse = await request.post("http://localhost:3004/api/congratulations", {
+        headers: {
+          "x-forwarded-for": "10.0.0.3",
+        },
         data: {
           type: "text",
           author_name: "Тестер",
-          content: "Тестовое поздравление",
+          message: "Тестовое поздравление",
         },
       });
 

@@ -53,9 +53,11 @@ test.describe("Homepage", () => {
     await page.fill("#author_name", "Иван");
     await page.getByTestId("message-editor").click();
     await page.getByTestId("message-editor").fill("Тестовое сообщение");
+    const ожиданиеОтвета = page.waitForResponse("**/api/congratulations");
     await page.getByTestId("submit-button").click({ force: true });
+    await ожиданиеОтвета;
 
-    await expect(page.getByText("Поздравление отправлено!")).toBeVisible();
+    await expect(page.getByText("Поздравление отправлено!")).toBeVisible({ timeout: 15000 });
     await expect(page.getByText("http://localhost:3004/congratulations/test1234")).toBeVisible();
   });
 

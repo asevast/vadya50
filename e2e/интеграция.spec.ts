@@ -8,6 +8,9 @@ test.describe("Интеграция с базой данных", () => {
     const сообщение = `Проверка интеграции ${new Date().toISOString()}`;
 
     const ответ = await request.post("http://localhost:3004/api/congratulations", {
+      headers: {
+        "x-forwarded-for": "10.0.0.1",
+      },
       data: {
         type: "text",
         author_name: автор,
