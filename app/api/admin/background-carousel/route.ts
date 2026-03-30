@@ -16,7 +16,7 @@ type СлайдФона = {
   blur: number;
 };
 
-const PHOTO_ROOT = process.env.PHOTO_ROOT || join(process.cwd(), "photo");
+const PHOTO_ROOT = join(process.cwd(), "public", "photo");
 const ДОПУСТИМЫЕ_РАСШИРЕНИЯ = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
 
 const ШАБЛОНЫ: Omit<СлайдФона, "id" | "src" | "alt">[] = [
@@ -55,7 +55,7 @@ export async function GET() {
       const override = overrides[имя] || {};
       return {
         id: `${индекс}-${имя}`,
-        src: `/api/photo/${encodeURIComponent(имя)}`,
+        src: `/photo/${encodeURIComponent(имя)}`,
         alt: override.alt || "Фото",
         x: override.x ?? шаблон.x,
         y: override.y ?? шаблон.y,
