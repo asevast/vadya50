@@ -4,6 +4,7 @@ import VideoPlayer from "@/components/shared/VideoPlayer";
 import ViewCounterBeacon from "@/components/shared/ViewCounterBeacon";
 import { Card, CardContent } from "@/components/ui/card";
 import { получитьSupabaseAdmin } from "@/lib/supabase/server";
+import type { Database } from "@/types/supabase";
 import { Calendar, User } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -11,6 +12,9 @@ import { notFound } from "next/navigation";
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
+
+type Поздравление = Database["public"]["Tables"]["congratulations"]["Row"];
+type МетаданныеПоздравления = Pick<Поздравление, "author_name" | "type" | "message">;
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -21,7 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     .select("author_name, type, message")
     .eq("slug", slug)
     .eq("is_approved", true)
-    .single();
+    .single<МетаданныеПоздравления>();
 
   if (!data) {
     return {
@@ -44,18 +48,18 @@ export default async function CongratulationsPage({ params }: PageProps) {
   const { slug } = await params;
 
   const supabaseAdmin = получитьSupabaseAdmin();
-  const { data: congratulation, error } = await supabaseAdmin
+  const { data: поздравление, error } = await supabaseAdmin
     .from("congratulations")
     .select("*")
     .eq("slug", slug)
     .eq("is_approved", true)
-    .single();
+    .single<Поздравление>();
 
-  if (error || !congratulation) {
+  if (error || !поздравление) {
     notFound();
   }
 
-  const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL}/congratulations/${slug}`;
+  const ссылкаДляШара = `${process.env.NEXT_PUBLIC_APP_URL}/congratulations/${slug}`;
 
   return (
     <div className="min-h-screen py-12 px-4">
@@ -66,52 +70,52 @@ export default async function CongratulationsPage({ params }: PageProps) {
             <div className="mb-8">
               <div className="flex items-center gap-2 text-gold mb-4">
                 <User className="w-5 h-5" />
-                <span className="font-medium">{congratulation.author_name}</span>
+                <span className="font-medium">{поздравление.author_name}</span>
               </div>
 
               <div className="flex items-center gap-2 text-gray-400 text-sm">
                 <Calendar className="w-4 h-4" />
                 <span>
-                  {new Date(congratulation.created_at).toLocaleDateString("ru-RU", {
+                  {new Date(поздравление.created_at).toLocaleDateString("ru-RU", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
                   })}
                 </span>
                 <span className="mx-2">•</span>
-                <span>{congratulation.views_count} просмотров</span>
+                <span>{поздравление.views_count} просмотров</span>
               </div>
             </div>
 
             {/* Content based on type */}
-            {congratulation.type === "text" && (
+            {поздравление.type === "text" && (
               <div className="prose prose-invert max-w-none">
                 <p className="text-lg leading-relaxed whitespace-pre-wrap">
-                  {congratulation.message}
+                  {поздравление.message}
                 </p>
               </div>
             )}
 
-            {congratulation.type === "audio" && congratulation.media_url && (
+            {поздравление.type === "audio" && поздравление.media_url && (
               <div className="space-y-4">
                 <AudioPlayer
-                  src={congratulation.media_url}
-                  duration={congratulation.duration_sec}
+                  src={поздравление.media_url}
+                  duration={поздравление.duration_sec ?? undefined}
                 />
               </div>
             )}
 
-            {congratulation.type === "video" && congratulation.media_url && (
+            {поздравление.type === "video" && поздравление.media_url && (
               <div className="space-y-4">
                 <VideoPlayer
-                  src={congratulation.media_url}
-                  poster={congratulation.thumbnail_url || undefined}
+                  src={поздравление.media_url}
+                  poster={поздравление.thumbnail_url || undefined}
                 />
               </div>
             )}
 
             {/* Share section */}
-            <ShareActions shareUrl={shareUrl} />
+            <ShareActions shareUrl={ссылкаДляШара} />
           </CardContent>
         </Card>
       </div>

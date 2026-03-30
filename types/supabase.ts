@@ -45,6 +45,7 @@ export type Database = {
           views_count?: number;
           updated_at?: string | null;
         };
+        Relationships: [];
       };
     };
     Views: Record<string, never>;
