@@ -1,7 +1,7 @@
 import type { Database } from "@/types/supabase";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-let кэшАдминКлиента: ReturnType<typeof createClient<Database>> | null = null;
+let кэшАдминКлиента: SupabaseClient<Database, "public"> | null = null;
 
 const получитьПеременную = (key: "NEXT_PUBLIC_SUPABASE_URL" | "SUPABASE_SERVICE_ROLE_KEY") => {
   const value = process.env[key];
@@ -17,7 +17,7 @@ export const получитьSupabaseAdmin = () => {
   const supabaseUrl = получитьПеременную("NEXT_PUBLIC_SUPABASE_URL");
   const supabaseServiceKey = получитьПеременную("SUPABASE_SERVICE_ROLE_KEY");
 
-  кэшАдминКлиента = createClient<Database>(supabaseUrl, supabaseServiceKey, {
+  кэшАдминКлиента = createClient<Database, "public">(supabaseUrl, supabaseServiceKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
