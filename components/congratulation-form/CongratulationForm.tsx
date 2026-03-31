@@ -133,6 +133,14 @@ export default function CongratulationForm() {
                 event.preventDefault();
                 form.handleSubmit(onSubmit)();
               }}
+              onPointerUp={(event) => {
+                event.preventDefault();
+                form.handleSubmit(onSubmit)();
+              }}
+              onTouchEnd={(event) => {
+                event.preventDefault();
+                form.handleSubmit(onSubmit)();
+              }}
               className="flex-1 rounded-lg bg-gold text-black hover:bg-yellow-400 text-lg py-6 transition-colors disabled:opacity-50 disabled:pointer-events-none"
             >
               {form.formState.isSubmitting ? "Отправка..." : "Отправить"}
