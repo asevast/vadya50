@@ -1,4 +1,5 @@
 import { проверкаЛимита } from "@/lib/rate-limit";
+import { convertMediaIfNeeded } from "@/lib/media/convert";
 import { получитьSupabaseAdmin } from "@/lib/supabase/server";
 import { uploadFile, проверитьMimeБакета } from "@/lib/supabase/storage";
 import { sendTelegramNotification } from "@/lib/telegram";
@@ -6,6 +7,8 @@ import { congratulationSchema } from "@/lib/validations";
 import { nanoid } from "nanoid";
 import { type NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
+
+export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   try {
@@ -59,6 +62,11 @@ export async function POST(request: NextRequest) {
 
     // Handle media upload
     if (validatedData.media_file) {
+      const conversion = await convertMediaIfNeeded(
+        validatedData.media_file,
+        validatedData.type
+      );
+      const fileToUpload = conversion.file;
       const bucket = validatedData.type === "audio" ? "audio" : "video";
       if (validatedData.type === "video") {
         const проверка = await проверитьMimeБакета(bucket, [
@@ -77,7 +85,7 @@ export async function POST(request: NextRequest) {
         }
       }
       try {
-        const uploadResult = await uploadFile(validatedData.media_file, bucket);
+        const uploadResult = await uploadFile(fileToUpload, bucket);
         media_url = uploadResult.url;
         media_key = uploadResult.path;
       } catch (uploadError) {
