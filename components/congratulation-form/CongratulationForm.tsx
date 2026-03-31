@@ -17,7 +17,6 @@ export default function CongratulationForm() {
   const [activeTab, setActiveTab] = useState<string>("text");
   const { submitCongratulation, isLoading, error, slug, shareUrl } = useCongratulation();
   const [submitResult, setSubmitResult] = useState<{ slug: string; shareUrl: string } | null>(null);
-  const [этоIOS, установитьЭтоIOS] = useState(false);
   const [jsГотов, установитьJsГотов] = useState(false);
 
   const form = useForm<CongratulationFormData>({
@@ -32,7 +31,6 @@ export default function CongratulationForm() {
 
   useEffect(() => {
     if (typeof navigator === "undefined") return;
-    установитьЭтоIOS(/iPad|iPhone|iPod/i.test(navigator.userAgent || ""));
     установитьJsГотов(true);
     document.documentElement.classList.add("react-ready");
   }, []);
@@ -114,7 +112,7 @@ export default function CongratulationForm() {
           action="/api/congratulations"
           method="post"
           encType="multipart/form-data"
-          onSubmit={этоIOS ? undefined : form.handleSubmit(onSubmit)}
+          onSubmit={jsГотов ? form.handleSubmit(onSubmit) : undefined}
           className="space-y-6 mt-6"
         >
           <input type="hidden" name="type" value={activeTab} />
