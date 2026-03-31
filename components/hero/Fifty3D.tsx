@@ -2,7 +2,7 @@
 
 import { Center, Text3D } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { Group, Mesh } from "three";
 
 function Пятьдесят({
@@ -26,6 +26,12 @@ function Пятьдесят({
       groupRef.current.rotation.y += delta * 0.25;
     }
   });
+
+  useLayoutEffect(() => {
+    if (!meshRef.current) return;
+    meshRef.current.geometry.computeBoundingBox();
+    meshRef.current.geometry.center();
+  }, []);
 
   return (
     <Center>
