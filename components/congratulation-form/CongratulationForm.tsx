@@ -17,6 +17,7 @@ export default function CongratulationForm() {
   const [activeTab, setActiveTab] = useState<string>("text");
   const { submitCongratulation, isLoading, error, slug, shareUrl } = useCongratulation();
   const [submitResult, setSubmitResult] = useState<{ slug: string; shareUrl: string } | null>(null);
+  const [этоIOS, установитьЭтоIOS] = useState(false);
 
   const form = useForm<CongratulationFormData>({
     resolver: zodResolver(congratulationSchema),
@@ -27,6 +28,11 @@ export default function CongratulationForm() {
       media_file: undefined,
     },
   });
+
+  useEffect(() => {
+    if (typeof navigator === "undefined") return;
+    установитьЭтоIOS(/iPad|iPhone|iPod/i.test(navigator.userAgent || ""));
+  }, []);
 
   // Update form type when tab changes
   useEffect(() => {
@@ -84,7 +90,7 @@ export default function CongratulationForm() {
           action="/api/congratulations"
           method="post"
           encType="multipart/form-data"
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={этоIOS ? undefined : form.handleSubmit(onSubmit)}
           className="space-y-6 mt-6"
         >
           <input type="hidden" name="type" value={activeTab} />
@@ -136,18 +142,30 @@ export default function CongratulationForm() {
               type="submit"
               disabled={form.formState.isSubmitting}
               data-testid="submit-button"
-              onClick={(event) => {
-                event.preventDefault();
-                form.handleSubmit(onSubmit)();
-              }}
-              onPointerUp={(event) => {
-                event.preventDefault();
-                form.handleSubmit(onSubmit)();
-              }}
-              onTouchEnd={(event) => {
-                event.preventDefault();
-                form.handleSubmit(onSubmit)();
-              }}
+              onClick={
+                этоIOS
+                  ? undefined
+                  : (event) => {
+                      event.preventDefault();
+                      form.handleSubmit(onSubmit)();
+                    }
+              }
+              onPointerUp={
+                этоIOS
+                  ? undefined
+                  : (event) => {
+                      event.preventDefault();
+                      form.handleSubmit(onSubmit)();
+                    }
+              }
+              onTouchEnd={
+                этоIOS
+                  ? undefined
+                  : (event) => {
+                      event.preventDefault();
+                      form.handleSubmit(onSubmit)();
+                    }
+              }
               className="flex-1 rounded-lg bg-gold text-black hover:bg-yellow-400 text-lg py-6 transition-colors disabled:opacity-50 disabled:pointer-events-none"
             >
               {form.formState.isSubmitting ? "Отправка..." : "Отправить"}

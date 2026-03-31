@@ -26,7 +26,8 @@ export default function RootLayout({
         <script
           // Добавляем класс, чтобы скрывать статичный hero после запуска JS
           dangerouslySetInnerHTML={{
-            __html: "document.documentElement.classList.add('js-ready');",
+            __html:
+              "document.documentElement.classList.add('js-ready');if(/iPad|iPhone|iPod/i.test(navigator.userAgent)){document.documentElement.classList.add('ios');}",
           }}
         />
         {children}

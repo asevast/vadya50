@@ -219,6 +219,14 @@ body::after {
   display: block;
 }
 
+.ios .герой-статичный {
+  display: block;
+}
+
+.ios .герой-динамичный {
+  display: none;
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
