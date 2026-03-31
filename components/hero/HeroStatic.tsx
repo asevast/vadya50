@@ -1,5 +1,3 @@
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import Countdown from "./Countdown";
 
 export default function HeroStatic() {
@@ -21,10 +19,7 @@ export default function HeroStatic() {
           </div>
           <a
             href="#congratulation-form"
-            className={cn(
-              buttonVariants({ size: "lg" }),
-              "bg-gold text-black hover:bg-yellow-400 text-lg px-8 py-6"
-            )}
+            className="inline-flex items-center justify-center rounded-lg bg-gold text-black hover:bg-yellow-400 text-lg px-8 py-6 font-medium transition-colors"
           >
             Поздравить
           </a>
