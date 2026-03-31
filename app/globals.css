@@ -241,3 +241,17 @@ html {
     animation: none !important;
   }
 }
+
+@media (max-height: 700px) {
+  .герой-обертка {
+    min-height: 60vh;
+  }
+
+  .герой-сетка {
+    gap: 1.5rem;
+  }
+
+  .герой-50-блок {
+    height: 220px;
+  }
+}
