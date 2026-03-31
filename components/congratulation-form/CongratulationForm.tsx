@@ -34,6 +34,7 @@ export default function CongratulationForm() {
     if (typeof navigator === "undefined") return;
     установитьЭтоIOS(/iPad|iPhone|iPod/i.test(navigator.userAgent || ""));
     установитьJsГотов(true);
+    document.documentElement.classList.add("react-ready");
   }, []);
 
   // Update form type when tab changes
@@ -66,7 +67,7 @@ export default function CongratulationForm() {
           name="tab-selector"
           id="tab-text"
           className="sr-only"
-          defaultChecked
+          checked={activeTab === "text"}
           onChange={() => setActiveTab("text")}
         />
         <input
@@ -74,6 +75,7 @@ export default function CongratulationForm() {
           name="tab-selector"
           id="tab-audio"
           className="sr-only"
+          checked={activeTab === "audio"}
           onChange={() => setActiveTab("audio")}
         />
         <input
@@ -81,6 +83,7 @@ export default function CongratulationForm() {
           name="tab-selector"
           id="tab-video"
           className="sr-only"
+          checked={activeTab === "video"}
           onChange={() => setActiveTab("video")}
         />
 

@@ -188,19 +188,19 @@ body::after {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-html:not(.js-ready) [data-tab-panel] {
+html:not(.react-ready) [data-tab-panel] {
   display: none;
 }
 
-html:not(.js-ready) #tab-text:checked ~ form [data-tab-panel="text"] {
+html:not(.react-ready) #tab-text:checked ~ form [data-tab-panel="text"] {
   display: block;
 }
 
-html:not(.js-ready) #tab-audio:checked ~ form [data-tab-panel="audio"] {
+html:not(.react-ready) #tab-audio:checked ~ form [data-tab-panel="audio"] {
   display: block;
 }
 
-html:not(.js-ready) #tab-video:checked ~ form [data-tab-panel="video"] {
+html:not(.react-ready) #tab-video:checked ~ form [data-tab-panel="video"] {
   display: block;
 }
 
