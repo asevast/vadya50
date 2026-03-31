@@ -12,7 +12,13 @@ interface AudioTabProps {
 }
 
 const getSupportedAudioMimeType = () => {
-  const candidates = ["audio/mp4", "audio/aac", "audio/m4a", "audio/webm;codecs=opus", "audio/webm"];
+  const candidates = [
+    "audio/mp4",
+    "audio/aac",
+    "audio/m4a",
+    "audio/webm;codecs=opus",
+    "audio/webm",
+  ];
   if (typeof MediaRecorder === "undefined") return "";
   for (const candidate of candidates) {
     if (MediaRecorder.isTypeSupported(candidate)) {

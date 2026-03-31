@@ -128,7 +128,7 @@ export default function HeroSection() {
 
 function Статичный50() {
   return (
-          <div className="h-[260px] sm:h-[320px] md:h-[360px] lg:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center hero-50">
+    <div className="h-[260px] sm:h-[320px] md:h-[360px] lg:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center hero-50">
       <div
         className="font-display text-[5.5rem] sm:text-[6.5rem] md:text-[8rem] lg:text-[9rem] text-gold"
         style={{

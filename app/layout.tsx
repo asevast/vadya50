@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Inter, Playfair_Display } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -23,13 +24,9 @@ export default function RootLayout({
   return (
     <html lang="ru" className={cn("dark font-sans", geist.variable)}>
       <body className={`${geist.variable} ${playfair.variable} antialiased`}>
-        <script
-          // Добавляем класс, чтобы скрывать статичный hero после запуска JS
-          dangerouslySetInnerHTML={{
-            __html:
-              "document.documentElement.classList.add('js-ready');if(/iPad|iPhone|iPod/i.test(navigator.userAgent)){document.documentElement.classList.add('ios');}",
-          }}
-        />
+        <Script id="set-ios-flag" strategy="beforeInteractive">
+          {`if (/iPad|iPhone|iPod/i.test(navigator.userAgent)) { document.documentElement.classList.add('ios'); }`}
+        </Script>
         {children}
       </body>
     </html>

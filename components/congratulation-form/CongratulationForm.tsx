@@ -88,12 +88,13 @@ export default function CongratulationForm() {
             { key: "audio", label: "Аудио", id: "tab-audio" },
             { key: "video", label: "Видео", id: "tab-video" },
           ].map((tab) => (
-            <label
+            <button
               key={tab.key}
+              type="button"
               role="tab"
               aria-selected={activeTab === tab.key}
               data-testid={`tab-${tab.key}`}
-              htmlFor={tab.id}
+              onClick={() => setActiveTab(tab.key)}
               className={cn(
                 "relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center rounded-md px-1.5 py-0.5 text-sm font-medium transition-all",
                 "text-foreground/60 hover:text-foreground",
@@ -101,7 +102,7 @@ export default function CongratulationForm() {
               )}
             >
               {tab.label}
-            </label>
+            </button>
           ))}
         </div>
 

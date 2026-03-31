@@ -52,17 +52,7 @@ export const convertMediaIfNeeded = async (
 
   if (kind === "audio") {
     const outputPath = join(tmpdir(), `audio-${Date.now()}-${Math.random()}.m4a`);
-    await runFfmpeg([
-      "-y",
-      "-i",
-      inputPath,
-      "-vn",
-      "-c:a",
-      "aac",
-      "-b:a",
-      "128k",
-      outputPath,
-    ]);
+    await runFfmpeg(["-y", "-i", inputPath, "-vn", "-c:a", "aac", "-b:a", "128k", outputPath]);
     const outputBuffer = await readTempFile(outputPath);
     const outputFile = new File([outputBuffer], "audio.m4a", { type: "audio/m4a" });
     await fs.unlink(inputPath).catch(() => undefined);

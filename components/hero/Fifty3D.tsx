@@ -155,8 +155,7 @@ export default function Fifty3DComponent() {
           className="font-display text-[7.5rem] sm:text-[9rem] md:text-[12rem] lg:text-[14rem] text-gold"
           style={{
             color: "#FFE8B0",
-            textShadow:
-              "0 6px 18px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.35)",
+            textShadow: "0 6px 18px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.35)",
           }}
         >
           50
