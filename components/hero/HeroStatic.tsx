@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import Countdown from "./Countdown";
 
 export default function HeroStatic() {
@@ -18,13 +19,15 @@ export default function HeroStatic() {
               до рождения
             </span>
           </div>
-          <Button
-            asChild
-            size="lg"
-            className="bg-gold text-black hover:bg-yellow-400 text-lg px-8 py-6"
+          <a
+            href="#congratulation-form"
+            className={cn(
+              buttonVariants({ size: "lg" }),
+              "bg-gold text-black hover:bg-yellow-400 text-lg px-8 py-6"
+            )}
           >
-            <a href="#congratulation-form">Поздравить</a>
-          </Button>
+            Поздравить
+          </a>
         </div>
         <div className="flex justify-center">
           <div className="h-[260px] sm:h-[320px] md:h-[360px] lg:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center">
