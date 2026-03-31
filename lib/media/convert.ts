@@ -15,7 +15,7 @@ const runFfmpeg = async (args: string[]) => {
   }
 
   await new Promise<void>((resolve, reject) => {
-    const proc = spawn(ffmpegPath, args, { stdio: "ignore" });
+    const proc = spawn(ffmpegPath as string, args, { stdio: "ignore" });
     proc.on("error", reject);
     proc.on("close", (code) => {
       if (code === 0) resolve();
