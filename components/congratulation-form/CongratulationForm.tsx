@@ -17,7 +17,6 @@ export default function CongratulationForm() {
   const [activeTab, setActiveTab] = useState<string>("text");
   const { submitCongratulation, isLoading, error, slug, shareUrl } = useCongratulation();
   const [submitResult, setSubmitResult] = useState<{ slug: string; shareUrl: string } | null>(null);
-  const [jsГотов, установитьJsГотов] = useState(false);
 
   const form = useForm<CongratulationFormData>({
     resolver: zodResolver(congratulationSchema),
@@ -31,8 +30,6 @@ export default function CongratulationForm() {
 
   useEffect(() => {
     if (typeof navigator === "undefined") return;
-    установитьJsГотов(true);
-    document.documentElement.classList.add("react-ready");
   }, []);
 
   // Update form type when tab changes
@@ -112,7 +109,7 @@ export default function CongratulationForm() {
           action="/api/congratulations"
           method="post"
           encType="multipart/form-data"
-          onSubmit={jsГотов ? form.handleSubmit(onSubmit) : undefined}
+          onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-6 mt-6"
         >
           <input type="hidden" name="type" value={activeTab} />
@@ -135,30 +132,15 @@ export default function CongratulationForm() {
             )}
           </div>
 
-          <div
-            data-tab-panel="text"
-            className="space-y-4 mt-4"
-            hidden={jsГотов ? activeTab !== "text" : undefined}
-            aria-hidden={jsГотов ? activeTab !== "text" : undefined}
-          >
+          <div data-tab-panel="text" className="space-y-4 mt-4">
             <TextTab form={form} />
           </div>
 
-          <div
-            data-tab-panel="audio"
-            className="space-y-4 mt-4"
-            hidden={jsГотов ? activeTab !== "audio" : undefined}
-            aria-hidden={jsГотов ? activeTab !== "audio" : undefined}
-          >
+          <div data-tab-panel="audio" className="space-y-4 mt-4">
             <AudioTab form={form} />
           </div>
 
-          <div
-            data-tab-panel="video"
-            className="space-y-4 mt-4"
-            hidden={jsГотов ? activeTab !== "video" : undefined}
-            aria-hidden={jsГотов ? activeTab !== "video" : undefined}
-          >
+          <div data-tab-panel="video" className="space-y-4 mt-4">
             <VideoTab form={form} />
           </div>
 
