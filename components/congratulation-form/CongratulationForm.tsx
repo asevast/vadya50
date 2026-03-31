@@ -18,6 +18,7 @@ export default function CongratulationForm() {
   const { submitCongratulation, isLoading, error, slug, shareUrl } = useCongratulation();
   const [submitResult, setSubmitResult] = useState<{ slug: string; shareUrl: string } | null>(null);
   const [этоIOS, установитьЭтоIOS] = useState(false);
+  const [jsГотов, установитьJsГотов] = useState(false);
 
   const form = useForm<CongratulationFormData>({
     resolver: zodResolver(congratulationSchema),
@@ -32,6 +33,7 @@ export default function CongratulationForm() {
   useEffect(() => {
     if (typeof navigator === "undefined") return;
     установитьЭтоIOS(/iPad|iPhone|iPod/i.test(navigator.userAgent || ""));
+    установитьJsГотов(true);
   }, []);
 
   // Update form type when tab changes
@@ -59,19 +61,41 @@ export default function CongratulationForm() {
       </h2>
 
       <div className="w-full">
+        <input
+          type="radio"
+          name="tab-selector"
+          id="tab-text"
+          className="sr-only"
+          defaultChecked
+          onChange={() => setActiveTab("text")}
+        />
+        <input
+          type="radio"
+          name="tab-selector"
+          id="tab-audio"
+          className="sr-only"
+          onChange={() => setActiveTab("audio")}
+        />
+        <input
+          type="radio"
+          name="tab-selector"
+          id="tab-video"
+          className="sr-only"
+          onChange={() => setActiveTab("video")}
+        />
+
         <div role="tablist" className="grid w-full grid-cols-3 bg-black/30 rounded-lg p-[3px]">
           {[
-            { key: "text", label: "Текст" },
-            { key: "audio", label: "Аудио" },
-            { key: "video", label: "Видео" },
+            { key: "text", label: "Текст", id: "tab-text" },
+            { key: "audio", label: "Аудио", id: "tab-audio" },
+            { key: "video", label: "Видео", id: "tab-video" },
           ].map((tab) => (
-            <button
+            <label
               key={tab.key}
-              type="button"
               role="tab"
               aria-selected={activeTab === tab.key}
-              onClick={() => setActiveTab(tab.key)}
               data-testid={`tab-${tab.key}`}
+              htmlFor={tab.id}
               className={cn(
                 "relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center rounded-md px-1.5 py-0.5 text-sm font-medium transition-all",
                 "text-foreground/60 hover:text-foreground",
@@ -79,7 +103,7 @@ export default function CongratulationForm() {
               )}
             >
               {tab.label}
-            </button>
+            </label>
           ))}
         </div>
 
@@ -111,25 +135,28 @@ export default function CongratulationForm() {
           </div>
 
           <div
+            data-tab-panel="text"
             className="space-y-4 mt-4"
-            hidden={activeTab !== "text"}
-            aria-hidden={activeTab !== "text"}
+            hidden={jsГотов ? activeTab !== "text" : undefined}
+            aria-hidden={jsГотов ? activeTab !== "text" : undefined}
           >
             <TextTab form={form} />
           </div>
 
           <div
+            data-tab-panel="audio"
             className="space-y-4 mt-4"
-            hidden={activeTab !== "audio"}
-            aria-hidden={activeTab !== "audio"}
+            hidden={jsГотов ? activeTab !== "audio" : undefined}
+            aria-hidden={jsГотов ? activeTab !== "audio" : undefined}
           >
             <AudioTab form={form} />
           </div>
 
           <div
+            data-tab-panel="video"
             className="space-y-4 mt-4"
-            hidden={activeTab !== "video"}
-            aria-hidden={activeTab !== "video"}
+            hidden={jsГотов ? activeTab !== "video" : undefined}
+            aria-hidden={jsГотов ? activeTab !== "video" : undefined}
           >
             <VideoTab form={form} />
           </div>
