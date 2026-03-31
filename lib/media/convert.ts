@@ -64,7 +64,7 @@ export const convertMediaIfNeeded = async (
       outputPath,
     ]);
     const outputBuffer = await readTempFile(outputPath);
-    const outputFile = new File([outputBuffer], "audio.m4a", { type: "audio/mp4" });
+    const outputFile = new File([outputBuffer], "audio.m4a", { type: "audio/m4a" });
     await fs.unlink(inputPath).catch(() => undefined);
     return { file: outputFile, converted: true };
   }

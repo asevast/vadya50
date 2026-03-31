@@ -68,6 +68,24 @@ export async function POST(request: NextRequest) {
       );
       const fileToUpload = conversion.file;
       const bucket = validatedData.type === "audio" ? "audio" : "video";
+      if (validatedData.type === "audio") {
+        const проверка = await проверитьMimeБакета(bucket, [
+          "audio/m4a",
+          "audio/mp4",
+          "audio/x-m4a",
+          "audio/aac",
+          "audio/webm",
+        ]);
+        if (!проверка.ok) {
+          return NextResponse.json(
+            {
+              error: "Бакет не принимает аудио MIME-типы",
+              debug: проверка.message,
+            },
+            { status: 400 }
+          );
+        }
+      }
       if (validatedData.type === "video") {
         const проверка = await проверитьMimeБакета(bucket, [
           "video/quicktime",
@@ -92,7 +110,7 @@ export async function POST(request: NextRequest) {
         const rawMessage =
           uploadError instanceof Error ? uploadError.message : "Ошибка загрузки файла";
         const mimeHint = rawMessage.includes("mime type")
-          ? " Добавьте mime-тип видео в настройках бакета Supabase (например, video/quicktime, video/mp4, video/webm)."
+          ? " Добавьте mime-тип файла в настройках бакета Supabase (например, audio/m4a, audio/mp4, audio/aac, video/mp4, video/webm)."
           : "";
         const message = `${rawMessage}${mimeHint}`;
         console.error("Upload error:", uploadError);
