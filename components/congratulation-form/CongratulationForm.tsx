@@ -129,6 +129,10 @@ export default function CongratulationForm() {
               type="submit"
               disabled={form.formState.isSubmitting}
               data-testid="submit-button"
+              onClick={(event) => {
+                event.preventDefault();
+                form.handleSubmit(onSubmit)();
+              }}
               className="flex-1 rounded-lg bg-gold text-black hover:bg-yellow-400 text-lg py-6 transition-colors disabled:opacity-50 disabled:pointer-events-none"
             >
               {form.formState.isSubmitting ? "Отправка..." : "Отправить"}

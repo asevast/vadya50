@@ -3,7 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import { Component, useEffect, useState } from "react";
 import ФоноваяКарусель from "./BackgroundCarousel";
 import Countdown from "./Countdown";
 import ParticlesBackground from "./Particles";
@@ -93,9 +94,45 @@ export default function HeroSection() {
           transition={{ duration: 0.8 }}
           className="flex justify-center"
         >
-          <Fifty3DComponent />
+          <ГраницаОшибки3D fallback={<Статичный50 />}>
+            <Fifty3DComponent />
+          </ГраницаОшибки3D>
         </motion.div>
       </div>
     </section>
   );
+}
+
+function Статичный50() {
+  return (
+    <div className="h-[260px] sm:h-[320px] md:h-[360px] lg:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center герой-50-блок">
+      <div
+        className="font-display text-[5.5rem] sm:text-[6.5rem] md:text-[8rem] lg:text-[9rem] text-gold"
+        style={{
+          color: "#FFE8B0",
+          textShadow: "0 6px 18px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.35)",
+        }}
+      >
+        50
+      </div>
+    </div>
+  );
+}
+
+class ГраницаОшибки3D extends Component<
+  { fallback: ReactNode; children: ReactNode },
+  { естьОшибка: boolean }
+> {
+  state = { естьОшибка: false };
+
+  static getDerivedStateFromError() {
+    return { естьОшибка: true };
+  }
+
+  render() {
+    if (this.state.естьОшибка) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
 }
