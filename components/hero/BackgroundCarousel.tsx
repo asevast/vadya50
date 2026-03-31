@@ -76,7 +76,10 @@ export default function ФоноваяКарусель() {
   }
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+    <div
+      className="absolute inset-0 overflow-hidden pointer-events-none background-carousel"
+      aria-hidden="true"
+    >
       {слайды.map((слайд, i) => {
         const активен = i === индекс;
         const былАктивен = i === предыдущийИндекс.current;
@@ -94,7 +97,7 @@ export default function ФоноваяКарусель() {
           <div
             key={`${слайд.id}-${текущийId}-${предыдущийId}`}
             style={стиль}
-            className="absolute rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.35)] transition-opacity duration-[2200ms] ease-in-out"
+            className="absolute rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.35)] transition-opacity duration-[2200ms] ease-in-out background-carousel-slide"
           >
             <img
               src={слайд.src}

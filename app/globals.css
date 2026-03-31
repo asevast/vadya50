@@ -243,6 +243,11 @@ body::after {
   display: none;
 }
 
+.ios .background-carousel-slide {
+  filter: none !important;
+  box-shadow: none !important;
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;

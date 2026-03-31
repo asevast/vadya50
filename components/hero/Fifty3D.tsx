@@ -121,17 +121,17 @@ export default function Fifty3DComponent() {
 
   const безДвижения = уменьшенноеДвижение || малыйЭкран || вкладкаСкрыта;
   const нуженСтатичный = !поддержкаWebGL || уменьшенноеДвижение || низкийFPS;
-  const размерТекста = малыйЭкран ? 1.6 : 2.2;
-  const высотаТекста = малыйЭкран ? 0.3 : 0.4;
-  const толщинаФаски = малыйЭкран ? 0.045 : 0.06;
-  const размерФаски = малыйЭкран ? 0.02 : 0.03;
-  const масштаб = малыйЭкран ? 0.7 : 0.85;
+  const размерТекста = малыйЭкран ? 2.4 : 3.8;
+  const высотаТекста = малыйЭкран ? 0.45 : 0.6;
+  const толщинаФаски = малыйЭкран ? 0.07 : 0.1;
+  const размерФаски = малыйЭкран ? 0.03 : 0.05;
+  const масштаб = малыйЭкран ? 0.95 : 1.25;
 
   if (нуженСтатичный) {
     return (
-      <div className="h-[260px] sm:h-[320px] md:h-[360px] lg:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center hero-50">
+      <div className="h-[360px] sm:h-[420px] md:h-[480px] lg:h-[520px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center hero-50">
         <div
-          className="font-display text-[5.5rem] sm:text-[6.5rem] md:text-[8rem] lg:text-[9rem] text-gold"
+          className="font-display text-[7.5rem] sm:text-[9rem] md:text-[12rem] lg:text-[14rem] text-gold"
           style={{
             color: "#FFE8B0",
             textShadow:
@@ -145,7 +145,7 @@ export default function Fifty3DComponent() {
   }
 
   return (
-    <div className="h-[260px] sm:h-[320px] md:h-[360px] lg:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent relative hero-50">
+    <div className="h-[360px] sm:h-[420px] md:h-[480px] lg:h-[520px] w-full rounded-2xl overflow-hidden bg-transparent relative hero-50">
       <Canvas
         data-testid="fifty3d-canvas"
         dpr={dpr}
