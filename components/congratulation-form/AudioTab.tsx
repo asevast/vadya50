@@ -11,6 +11,23 @@ interface AudioTabProps {
   form: UseFormReturn<CongratulationFormData>;
 }
 
+const getSupportedAudioMimeType = () => {
+  const candidates = ["audio/mp4", "audio/aac", "audio/m4a", "audio/webm;codecs=opus", "audio/webm"];
+  if (typeof MediaRecorder === "undefined") return "";
+  for (const candidate of candidates) {
+    if (MediaRecorder.isTypeSupported(candidate)) {
+      return candidate;
+    }
+  }
+  return "";
+};
+
+const getAudioFileName = (mimeType: string) => {
+  if (mimeType.includes("mp4") || mimeType.includes("m4a")) return "audio.m4a";
+  if (mimeType.includes("aac")) return "audio.aac";
+  return "audio.webm";
+};
+
 export default function AudioTab({ form }: AudioTabProps) {
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurferRef = useRef<WaveSurfer | null>(null);
@@ -81,23 +98,6 @@ export default function AudioTab({ form }: AudioTabProps) {
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const canRecord = typeof MediaRecorder !== "undefined" && getSupportedAudioMimeType() !== "";
-
-  const getSupportedAudioMimeType = () => {
-    const candidates = ["audio/mp4", "audio/aac", "audio/m4a", "audio/webm;codecs=opus", "audio/webm"];
-    if (typeof MediaRecorder === "undefined") return "";
-    for (const candidate of candidates) {
-      if (MediaRecorder.isTypeSupported(candidate)) {
-        return candidate;
-      }
-    }
-    return "";
-  };
-
-  const getAudioFileName = (mimeType: string) => {
-    if (mimeType.includes("mp4") || mimeType.includes("m4a")) return "audio.m4a";
-    if (mimeType.includes("aac")) return "audio.aac";
-    return "audio.webm";
-  };
 
   const startRecording = async () => {
     try {
