@@ -65,7 +65,12 @@ export default function VideoTab({ form }: VideoTabProps) {
   }, []);
 
   const выбратьMimeType = () => {
-    const варианты = ["video/webm;codecs=vp9", "video/webm", "video/mp4"];
+    const варианты = [
+      "video/mp4;codecs=avc1.42E01E,mp4a.40.2",
+      "video/mp4",
+      "video/webm;codecs=vp9",
+      "video/webm",
+    ];
     for (const вариант of варианты) {
       if (MediaRecorder.isTypeSupported(вариант)) {
         return вариант;

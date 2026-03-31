@@ -58,7 +58,9 @@ export default function AudioTab({ form }: AudioTabProps) {
   const handleMediaRecorded = (blob: Blob, url: string) => {
     setAudioUrl(url);
     // For display purposes, we'll create a file-like object
-    const file = new File([blob], "audio.webm", { type: "audio/webm" });
+    const mimeType = blob.type || "audio/webm";
+    const fileName = getAudioFileName(mimeType);
+    const file = new File([blob], fileName, { type: mimeType });
     form.setValue("media_file", file);
   };
 
@@ -79,13 +81,38 @@ export default function AudioTab({ form }: AudioTabProps) {
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
+  const getSupportedAudioMimeType = () => {
+    const candidates = ["audio/mp4", "audio/aac", "audio/m4a", "audio/webm;codecs=opus", "audio/webm"];
+    if (typeof MediaRecorder === "undefined") return "";
+    for (const candidate of candidates) {
+      if (MediaRecorder.isTypeSupported(candidate)) {
+        return candidate;
+      }
+    }
+    return "";
+  };
+
+  const getAudioFileName = (mimeType: string) => {
+    if (mimeType.includes("mp4") || mimeType.includes("m4a")) return "audio.m4a";
+    if (mimeType.includes("aac")) return "audio.aac";
+    return "audio.webm";
+  };
+
   const startRecording = async () => {
     try {
       setRecordingError(null);
       chunksRef.current = [];
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      const mimeType = getSupportedAudioMimeType();
+      if (!mimeType) {
+        for (const track of stream.getTracks()) {
+          track.stop();
+        }
+        setRecordingError("Запись аудио недоступна в этом браузере.");
+        return;
+      }
+      const mediaRecorder = new MediaRecorder(stream, { mimeType });
       mediaRecorderRef.current = mediaRecorder;
 
       mediaRecorder.ondataavailable = (event) => {
@@ -93,7 +120,7 @@ export default function AudioTab({ form }: AudioTabProps) {
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        const blob = new Blob(chunksRef.current, { type: mimeType });
         const url = URL.createObjectURL(blob);
         handleMediaRecorded(blob, url);
         for (const track of stream.getTracks()) {
