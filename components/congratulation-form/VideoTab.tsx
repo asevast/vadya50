@@ -13,6 +13,7 @@ interface VideoTabProps {
 export default function VideoTab({ form }: VideoTabProps) {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [duration, setDuration] = useState(0);
+  const [fileSizeBytes, setFileSizeBytes] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -79,6 +80,30 @@ export default function VideoTab({ form }: VideoTabProps) {
     return "";
   };
 
+  const loadVideoDuration = (url: string) =>
+    new Promise<number>((resolve) => {
+      const video = document.createElement("video");
+      video.preload = "metadata";
+      video.onloadedmetadata = () => {
+        const value = Number.isFinite(video.duration) ? video.duration : 0;
+        resolve(value);
+      };
+      video.onerror = () => resolve(0);
+      video.src = url;
+    });
+
+  const formatBytes = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`;
+    const units = ["KB", "MB", "GB", "TB"];
+    let value = bytes / 1024;
+    let unitIndex = 0;
+    while (value >= 1024 && unitIndex < units.length - 1) {
+      value /= 1024;
+      unitIndex += 1;
+    }
+    return `${value.toFixed(2)} ${units[unitIndex]}`;
+  };
+
   const handleFile = (file: File) => {
     if (!file.type.startsWith("video/")) {
       alert("Пожалуйста, выберите видеофайл");
@@ -86,15 +111,12 @@ export default function VideoTab({ form }: VideoTabProps) {
     }
     const url = URL.createObjectURL(file);
     setVideoUrl(url);
+    setFileSizeBytes(file.size);
     form.setValue("media_file", file);
 
-    // Get duration from video
-    const video = document.createElement("video");
-    video.preload = "metadata";
-    video.onloadedmetadata = () => {
-      setDuration(video.duration);
-    };
-    video.src = url;
+    loadVideoDuration(url).then((value) => {
+      setDuration(value);
+    });
   };
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
@@ -112,6 +134,7 @@ export default function VideoTab({ form }: VideoTabProps) {
   const clearVideo = () => {
     setVideoUrl(null);
     setDuration(0);
+    setFileSizeBytes(null);
     setIsPlaying(false);
     form.setValue("media_file", undefined);
     setRecordingError(null);
@@ -162,10 +185,14 @@ export default function VideoTab({ form }: VideoTabProps) {
         const url = URL.createObjectURL(blob);
         recordedUrlRef.current = url;
         setVideoUrl(url);
+        setFileSizeBytes(blob.size);
 
         const имяФайла = тип.includes("mp4") ? "video.mp4" : "video.webm";
         const файл = new File([blob], имяФайла, { type: тип });
         form.setValue("media_file", файл);
+        loadVideoDuration(url).then((value) => {
+          setDuration(value);
+        });
 
         if (streamRef.current) {
           for (const track of streamRef.current.getTracks()) {
@@ -292,7 +319,7 @@ export default function VideoTab({ form }: VideoTabProps) {
           </div>
           <div className="flex justify-between text-sm text-gray-400">
             <span>Длительность: {Math.floor(duration)} сек</span>
-            <span>{(duration * 0.1).toFixed(2)} GB (примерно)</span>
+            <span>{fileSizeBytes ? formatBytes(fileSizeBytes) : "—"}</span>
           </div>
         </div>
       )}
