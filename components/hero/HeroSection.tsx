@@ -22,10 +22,11 @@ export default function HeroSection() {
   // Target: April 2, 2026 10:00 GMT+3 (MSK)
   const targetDate = new Date("2026-04-02T10:00:00+03:00");
   const [безТяжелыхЭффектов, установитьБезТяжелыхЭффектов] = useState(false);
+  const [этоIOS, установитьЭтоIOS] = useState(false);
 
   useEffect(() => {
     const агент = typeof navigator !== "undefined" ? navigator.userAgent : "";
-    const этоIOS = /iPad|iPhone|iPod/i.test(агент);
+    const ios = /iPad|iPhone|iPod/i.test(агент);
     const уменьшенноеДвижение =
       typeof window !== "undefined" &&
       window.matchMedia &&
@@ -39,7 +40,9 @@ export default function HeroSection() {
       ((памятьУстройства !== undefined && памятьУстройства <= 2) ||
         ("hardwareConcurrency" in navigator && navigator.hardwareConcurrency <= 4));
 
-    if (этоIOS || уменьшенноеДвижение || слабоеУстройство) {
+    установитьЭтоIOS(ios);
+
+    if (ios || уменьшенноеДвижение || слабоеУстройство) {
       установитьБезТяжелыхЭффектов(true);
     }
   }, []);
@@ -94,9 +97,13 @@ export default function HeroSection() {
           transition={{ duration: 0.8 }}
           className="flex justify-center"
         >
-          <ГраницаОшибки3D fallback={<Статичный50 />}>
-            <Fifty3DComponent />
-          </ГраницаОшибки3D>
+          {этоIOS ? (
+            <Статичный50 />
+          ) : (
+            <ГраницаОшибки3D fallback={<Статичный50 />}>
+              <Fifty3DComponent />
+            </ГраницаОшибки3D>
+          )}
         </motion.div>
       </div>
     </section>
