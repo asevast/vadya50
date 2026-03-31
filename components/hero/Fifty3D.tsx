@@ -56,6 +56,7 @@ export default function Fifty3DComponent() {
   const [поддержкаWebGL, установитьПоддержкуWebGL] = useState(true);
   const [уменьшенноеДвижение, установитьУменьшенноеДвижение] = useState(false);
   const [низкийFPS, установитьНизкийFPS] = useState(false);
+  const [lowPowerDevice, setLowPowerDevice] = useState(false);
   const [dpr, установитьDpr] = useState<[number, number]>([1, 1.5]);
   const [малыйЭкран, установитьМалыйЭкран] = useState(false);
   const [вкладкаСкрыта, установитьВкладкуСкрытой] = useState(false);
@@ -79,6 +80,16 @@ export default function Fifty3DComponent() {
     const коэффициент = Math.min(1.5, window.devicePixelRatio || 1);
     установитьDpr([1, коэффициент]);
 
+    const deviceMemory =
+      typeof navigator !== "undefined" && "deviceMemory" in navigator
+        ? (navigator as Navigator & { deviceMemory?: number }).deviceMemory
+        : undefined;
+    const lowPower =
+      typeof navigator !== "undefined" &&
+      ((deviceMemory !== undefined && deviceMemory <= 2) ||
+        ("hardwareConcurrency" in navigator && navigator.hardwareConcurrency <= 4));
+    setLowPowerDevice(lowPower);
+
     const обработчикВкладки = () => {
       установитьВкладкуСкрытой(document.visibilityState !== "visible");
     };
@@ -93,6 +104,7 @@ export default function Fifty3DComponent() {
   }, []);
 
   useEffect(() => {
+    if (!lowPowerDevice) return;
     let кадры = 0;
     let id: number | null = null;
     const начало = performance.now();
@@ -117,10 +129,10 @@ export default function Fifty3DComponent() {
         cancelAnimationFrame(id);
       }
     };
-  }, []);
+  }, [lowPowerDevice]);
 
   const безДвижения = уменьшенноеДвижение || малыйЭкран || вкладкаСкрыта;
-  const нуженСтатичный = !поддержкаWebGL || уменьшенноеДвижение || низкийFPS;
+  const нуженСтатичный = !поддержкаWebGL || уменьшенноеДвижение || (lowPowerDevice && низкийFPS);
   const размерТекста = малыйЭкран ? 2.4 : 3.8;
   const высотаТекста = малыйЭкран ? 0.45 : 0.6;
   const толщинаФаски = малыйЭкран ? 0.07 : 0.1;

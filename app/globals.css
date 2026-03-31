@@ -227,11 +227,11 @@ body::after {
   display: none;
 }
 
-.js-ready .hero-static {
+.hero-dynamic-ready .hero-static {
   display: none;
 }
 
-.js-ready .hero-dynamic {
+.hero-dynamic-ready .hero-dynamic {
   display: block;
 }
 

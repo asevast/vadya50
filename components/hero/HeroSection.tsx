@@ -47,6 +47,14 @@ export default function HeroSection() {
     if (ios || уменьшенноеДвижение || слабоеУстройство) {
       установитьБезТяжелыхЭффектов(true);
     }
+
+    if (typeof document !== "undefined") {
+      if (ios) {
+        document.documentElement.classList.remove("hero-dynamic-ready");
+      } else {
+        document.documentElement.classList.add("hero-dynamic-ready");
+      }
+    }
   }, []);
 
   const показыватьДинамику = клиентГотов && !этоIOS;
