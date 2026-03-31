@@ -25,6 +25,21 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  transpilePackages: [
+    "@tiptap/react",
+    "@tiptap/starter-kit",
+    "prosemirror-commands",
+    "prosemirror-history",
+    "prosemirror-inputrules",
+    "prosemirror-keymap",
+    "prosemirror-model",
+    "prosemirror-schema-list",
+    "prosemirror-state",
+    "prosemirror-transform",
+    "prosemirror-view",
+    "wavesurfer.js",
+    "lucide-react",
+  ],
 };
 
 export default nextConfig;
