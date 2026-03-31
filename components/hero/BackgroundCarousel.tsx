@@ -22,6 +22,7 @@ export default function ФоноваяКарусель() {
   const [слайды, установитьСлайды] = useState<СлайдФона[]>(ЗАПАСНЫЕ_СЛАЙДЫ);
   const [индекс, установитьИндекс] = useState(0);
   const [переход, установитьПереход] = useState(false);
+  const [lightImages, setLightImages] = useState(false);
   const предыдущийИндекс = useRef(0);
 
   useEffect(() => {
@@ -44,6 +45,12 @@ export default function ФоноваяКарусель() {
     return () => {
       отменено = true;
     };
+  }, []);
+
+  useEffect(() => {
+    const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+    const isIOS = /iPad|iPhone|iPod/.test(ua);
+    if (isIOS) setLightImages(true);
   }, []);
 
   useEffect(() => {
@@ -93,6 +100,10 @@ export default function ФоноваяКарусель() {
           filter: `blur(${слайд.blur}px)`,
         } as const;
 
+        const src = lightImages
+          ? `${слайд.src}${слайд.src.includes("?") ? "&" : "?"}w=1000&q=70&format=jpeg`
+          : слайд.src;
+
         return (
           <div
             key={`${слайд.id}-${текущийId}-${предыдущийId}`}
@@ -100,9 +111,10 @@ export default function ФоноваяКарусель() {
             className="absolute rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.35)] transition-opacity duration-[2200ms] ease-in-out background-carousel-slide"
           >
             <img
-              src={слайд.src}
+              src={src}
               alt={слайд.alt}
-              loading="lazy"
+              loading={i === 0 ? "eager" : "lazy"}
+              decoding="async"
               className="w-full h-full object-contain rounded-2xl bg-black/30"
             />
           </div>
