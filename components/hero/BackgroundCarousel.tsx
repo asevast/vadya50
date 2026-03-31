@@ -22,7 +22,7 @@ export default function ФоноваяКарусель() {
   const [слайды, установитьСлайды] = useState<СлайдФона[]>(ЗАПАСНЫЕ_СЛАЙДЫ);
   const [индекс, установитьИндекс] = useState(0);
   const [переход, установитьПереход] = useState(false);
-  const [lightImages, setLightImages] = useState(false);
+  const [lightImages, setLightImages] = useState(true);
   const предыдущийИндекс = useRef(0);
 
   useEffect(() => {
@@ -45,12 +45,6 @@ export default function ФоноваяКарусель() {
     return () => {
       отменено = true;
     };
-  }, []);
-
-  useEffect(() => {
-    const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
-    const isIOS = /iPad|iPhone|iPod/.test(ua);
-    if (isIOS) setLightImages(true);
   }, []);
 
   useEffect(() => {
@@ -82,14 +76,19 @@ export default function ФоноваяКарусель() {
     return <div className="absolute inset-0" aria-hidden="true" />;
   }
 
+  const visibleIndices = Array.from(
+    new Set([индекс, предыдущийИндекс.current].filter((idx) => idx >= 0 && idx < слайды.length))
+  );
+
   return (
     <div
       className="absolute inset-0 overflow-hidden pointer-events-none background-carousel"
       aria-hidden="true"
     >
-      {слайды.map((слайд, i) => {
-        const активен = i === индекс;
-        const былАктивен = i === предыдущийИндекс.current;
+      {visibleIndices.map((slideIndex) => {
+        const слайд = слайды[slideIndex];
+        const активен = slideIndex === индекс;
+        const былАктивен = slideIndex === предыдущийИндекс.current;
         const стиль = {
           left: `${слайд.x}%`,
           top: `${слайд.y}%`,
@@ -101,7 +100,7 @@ export default function ФоноваяКарусель() {
         } as const;
 
         const src = lightImages
-          ? `${слайд.src}${слайд.src.includes("?") ? "&" : "?"}w=1000&q=70&format=jpeg`
+          ? `${слайд.src}${слайд.src.includes("?") ? "&" : "?"}w=900&q=65&format=jpeg`
           : слайд.src;
 
         return (
@@ -113,8 +112,9 @@ export default function ФоноваяКарусель() {
             <img
               src={src}
               alt={слайд.alt}
-              loading={i === 0 ? "eager" : "lazy"}
+              loading={активен ? "eager" : "lazy"}
               decoding="async"
+              fetchpriority={активен ? "high" : "auto"}
               className="w-full h-full object-contain rounded-2xl bg-black/30"
             />
           </div>
