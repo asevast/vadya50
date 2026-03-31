@@ -93,16 +93,7 @@ export default function HeroSection() {
           transition={{ duration: 0.8 }}
           className="flex justify-center"
         >
-          {безТяжелыхЭффектов ? (
-            <div
-              data-testid="fifty3d-fallback"
-              className="h-[320px] sm:h-[360px] md:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center"
-            >
-              <div className="text-[5rem] font-display text-gold">50</div>
-            </div>
-          ) : (
-            <Fifty3DComponent />
-          )}
+          <Fifty3DComponent />
         </motion.div>
       </div>
     </section>

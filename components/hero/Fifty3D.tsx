@@ -54,7 +54,8 @@ function Пятьдесят({
 
 export default function Fifty3DComponent() {
   const [поддержкаWebGL, установитьПоддержкуWebGL] = useState(true);
-  const [безАнимации, установитьБезАнимации] = useState(false);
+  const [уменьшенноеДвижение, установитьУменьшенноеДвижение] = useState(false);
+  const [низкийFPS, установитьНизкийFPS] = useState(false);
   const [dpr, установитьDpr] = useState<[number, number]>([1, 1.5]);
   const [малыйЭкран, установитьМалыйЭкран] = useState(false);
   const [вкладкаСкрыта, установитьВкладкуСкрытой] = useState(false);
@@ -68,7 +69,7 @@ export default function Fifty3DComponent() {
 
     const медиаЗапрос = window.matchMedia("(prefers-reduced-motion: reduce)");
     const медиаЗапросЭкрана = window.matchMedia("(max-width: 360px)");
-    const обработчикДвижения = () => установитьБезАнимации(медиаЗапрос.matches);
+    const обработчикДвижения = () => установитьУменьшенноеДвижение(медиаЗапрос.matches);
     const обработчикЭкрана = () => установитьМалыйЭкран(медиаЗапросЭкрана.matches);
     обработчикДвижения();
     обработчикЭкрана();
@@ -91,14 +92,42 @@ export default function Fifty3DComponent() {
     };
   }, []);
 
-  const безДвижения = безАнимации || малыйЭкран || вкладкаСкрыта;
+  useEffect(() => {
+    let кадры = 0;
+    let id: number | null = null;
+    const начало = performance.now();
+
+    const измерить = (время: number) => {
+      кадры += 1;
+      const прошло = время - начало;
+      if (прошло >= 1500) {
+        const fps = (кадры * 1000) / прошло;
+        if (fps < 24) {
+          установитьНизкийFPS(true);
+        }
+        return;
+      }
+      id = requestAnimationFrame(измерить);
+    };
+
+    id = requestAnimationFrame(измерить);
+
+    return () => {
+      if (id !== null) {
+        cancelAnimationFrame(id);
+      }
+    };
+  }, []);
+
+  const безДвижения = уменьшенноеДвижение || малыйЭкран || вкладкаСкрыта;
+  const нуженСтатичный = !поддержкаWebGL || уменьшенноеДвижение || низкийFPS;
   const размерТекста = малыйЭкран ? 1.6 : 2.2;
   const высотаТекста = малыйЭкран ? 0.3 : 0.4;
   const толщинаФаски = малыйЭкран ? 0.045 : 0.06;
   const размерФаски = малыйЭкран ? 0.02 : 0.03;
   const масштаб = малыйЭкран ? 0.7 : 0.85;
 
-  if (!поддержкаWebGL) {
+  if (нуженСтатичный) {
     return (
       <div className="h-[320px] sm:h-[360px] md:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center">
         <div className="text-[5rem] font-display" style={{ color: "#FFE8B0" }}>
@@ -110,18 +139,6 @@ export default function Fifty3DComponent() {
 
   return (
     <div className="h-[320px] sm:h-[360px] md:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent relative">
-      {/* Visible fallback text for accessibility and testing */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
-      >
-        <span
-          className="text-[8rem] font-display text-gold/30 select-none"
-          style={{ color: "#FFD700", opacity: 0.3 }}
-        >
-          50
-        </span>
-      </div>
       <Canvas
         data-testid="fifty3d-canvas"
         dpr={dpr}
