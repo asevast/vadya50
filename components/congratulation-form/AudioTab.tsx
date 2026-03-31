@@ -196,7 +196,7 @@ export default function AudioTab({ form }: AudioTabProps) {
                 ref={fileInputRef}
                 type="file"
                 accept="audio/*"
-                capture="microphone"
+                capture="user"
                 data-testid="audio-file"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
