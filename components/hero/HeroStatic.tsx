@@ -1,3 +1,5 @@
+import CountdownStatic from "./CountdownStatic";
+
 export default function HeroStatic() {
   return (
     <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden hero-wrapper hero-static">
@@ -6,54 +8,8 @@ export default function HeroStatic() {
           <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display mb-4 sm:mb-6 text-gold объемный-текст leading-tight">
             Вадя принимает поздравления
           </h1>
-          <div className="mb-6 sm:mb-8 flex flex-wrap items-end gap-4" data-countdown-root>
-            <div className="flex gap-4 text-center items-baseline tabular-nums">
-              <div className="flex flex-col">
-                <span
-                  className="text-4xl font-bold text-gold inline-block w-[2ch] text-center"
-                  data-countdown="days"
-                >
-                  00
-                </span>
-                <span className="text-sm text-gray-400">Дней</span>
-              </div>
-              <div className="flex flex-col">
-                <span
-                  className="text-4xl font-bold text-gold inline-block w-[2ch] text-center"
-                  data-countdown="hours"
-                >
-                  00
-                </span>
-                <span className="text-sm text-gray-400">Часов</span>
-              </div>
-              <div className="flex flex-col">
-                <span
-                  className="text-4xl font-bold text-gold inline-block w-[2ch] text-center"
-                  data-countdown="minutes"
-                >
-                  00
-                </span>
-                <span className="text-sm text-gray-400">Минут</span>
-              </div>
-              <div className="flex flex-col">
-                <span
-                  className="text-4xl font-bold text-gold inline-block w-[2ch] text-center"
-                  data-countdown="seconds"
-                >
-                  00
-                </span>
-                <span className="text-sm text-gray-400">Секунд</span>
-              </div>
-              <div className="flex flex-col">
-                <span
-                  className="text-2xl font-bold text-gold inline-block w-[2ch] text-center"
-                  data-countdown="ms"
-                >
-                  00
-                </span>
-                <span className="text-xs text-gray-500">мс</span>
-              </div>
-            </div>
+          <div className="mb-6 sm:mb-8 flex flex-wrap items-end gap-4">
+            <CountdownStatic />
             <span className="text-sm md:text-base text-gray-300 whitespace-nowrap self-end min-w-[8ch] text-right">
               до рождения
             </span>

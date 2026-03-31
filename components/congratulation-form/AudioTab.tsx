@@ -80,6 +80,7 @@ export default function AudioTab({ form }: AudioTabProps) {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const canRecord = typeof MediaRecorder !== "undefined" && getSupportedAudioMimeType() !== "";
 
   const getSupportedAudioMimeType = () => {
     const candidates = ["audio/mp4", "audio/aac", "audio/m4a", "audio/webm;codecs=opus", "audio/webm"];
@@ -184,6 +185,7 @@ export default function AudioTab({ form }: AudioTabProps) {
                 data-testid="audio-record"
                 aria-label={isRecording ? "Остановить запись" : "Начать запись"}
                 className={`rounded-full w-16 h-16 ${isRecording ? "bg-red-500 hover:bg-red-600" : "bg-gold text-black hover:bg-yellow-400"}`}
+                disabled={!canRecord}
               >
                 {isRecording ? <Square className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
               </Button>
@@ -194,6 +196,7 @@ export default function AudioTab({ form }: AudioTabProps) {
                 ref={fileInputRef}
                 type="file"
                 accept="audio/*"
+                capture="microphone"
                 data-testid="audio-file"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
@@ -242,6 +245,12 @@ export default function AudioTab({ form }: AudioTabProps) {
           )}
         </div>
 
+        {!canRecord && (
+          <p className="text-sm text-gray-400">
+            Запись в браузере недоступна, используйте “Загрузить файл” для записи через системный
+            диктофон.
+          </p>
+        )}
         {recordingError && <p className="text-sm text-red-400">{recordingError}</p>}
       </div>
     </div>

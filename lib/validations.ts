@@ -69,10 +69,16 @@ export const congratulationSchema = z
 
     if (data.type === "audio") {
       const audioType = data.media_file.type || "";
+      const audioName = data.media_file.name || "";
+      const audioExt = audioName.toLowerCase();
       const isAllowedAudio =
         allowedAudioTypes.includes(audioType) ||
         audioType.startsWith("audio/mp4") ||
-        audioType.startsWith("audio/aac");
+        audioType.startsWith("audio/aac") ||
+        (audioType === "" &&
+          [".m4a", ".aac", ".mp3", ".wav", ".ogg", ".webm"].some((ext) =>
+            audioExt.endsWith(ext)
+          ));
       if (!isAllowedAudio) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
