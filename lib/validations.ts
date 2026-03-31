@@ -10,6 +10,10 @@ const allowedAudioTypes = [
   "audio/mp3",
   "audio/ogg",
   "audio/mpeg",
+  "audio/mp4",
+  "audio/m4a",
+  "audio/x-m4a",
+  "audio/aac",
   "audio/wav",
   "audio/x-wav",
 ];
@@ -64,7 +68,12 @@ export const congratulationSchema = z
     }
 
     if (data.type === "audio") {
-      if (!allowedAudioTypes.includes(data.media_file.type)) {
+      const audioType = data.media_file.type || "";
+      const isAllowedAudio =
+        allowedAudioTypes.includes(audioType) ||
+        audioType.startsWith("audio/mp4") ||
+        audioType.startsWith("audio/aac");
+      if (!isAllowedAudio) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Неверный формат аудио",
