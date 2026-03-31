@@ -10,7 +10,7 @@ type CountdownParts = {
   ms: string;
 };
 
-const targetTimestamp = Date.UTC(2026, 3, 2, 7, 0, 0);
+const targetTimestamp = Date.UTC(2026, 3, 2, 12, 0, 0);
 
 const pad2 = (value: number) => (value < 10 ? `0${value}` : `${value}`);
 

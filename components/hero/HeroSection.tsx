@@ -20,7 +20,7 @@ const Fifty3DComponent = dynamic(() => import("./Fifty3D"), {
 
 export default function HeroSection() {
   // Target: April 2, 2026 10:00 GMT+3 (MSK)
-  const targetDate = new Date("2026-04-02T10:00:00+03:00");
+  const targetDate = new Date("2026-04-02T15:00:00+03:00");
   const [безТяжелыхЭффектов, установитьБезТяжелыхЭффектов] = useState(false);
   const [этоIOS, установитьЭтоIOS] = useState(true);
   const [клиентГотов, установитьКлиентГотов] = useState(false);
