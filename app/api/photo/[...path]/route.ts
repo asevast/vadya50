@@ -57,7 +57,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pat
       outputBuffer = файл;
     }
 
-    return new NextResponse(outputBuffer, {
+    return new NextResponse(new Uint8Array(outputBuffer), {
       status: 200,
       headers: {
         "Content-Type": тип,
