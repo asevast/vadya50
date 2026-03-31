@@ -114,7 +114,7 @@ export default function ФоноваяКарусель() {
               alt={слайд.alt}
               loading={активен ? "eager" : "lazy"}
               decoding="async"
-              fetchpriority={активен ? "high" : "auto"}
+              fetchPriority={активен ? "high" : "auto"}
               className="w-full h-full object-contain rounded-2xl bg-black/30"
             />
           </div>
