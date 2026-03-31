@@ -37,13 +37,21 @@ export async function sendTelegramNotification(data: {
     });
 
     if (!response.ok) {
-      throw new Error(`Telegram API error: ${response.statusText}`);
+      const errorText = await response.text().catch(() => "");
+      throw new Error(
+        `Telegram API error: ${response.status} ${response.statusText}${errorText ? ` - ${errorText}` : ""}`
+      );
     }
+
+    console.info("Telegram notification sent", {
+      type: data.type,
+      shareUrl: data.shareUrl,
+    });
 
     // If media URL exists, also send it as media
     if (data.mediaUrl && data.type !== "text") {
       if (data.type === "audio") {
-        await fetch(`${apiUrl}/sendAudio`, {
+        const mediaResponse = await fetch(`${apiUrl}/sendAudio`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -52,8 +60,14 @@ export async function sendTelegramNotification(data: {
             caption: `Аудио-поздравление от ${data.authorName}`,
           }),
         });
+        if (!mediaResponse.ok) {
+          const errorText = await mediaResponse.text().catch(() => "");
+          throw new Error(
+            `Telegram API error (sendAudio): ${mediaResponse.status} ${mediaResponse.statusText}${errorText ? ` - ${errorText}` : ""}`
+          );
+        }
       } else if (data.type === "video") {
-        await fetch(`${apiUrl}/sendVideo`, {
+        const mediaResponse = await fetch(`${apiUrl}/sendVideo`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -63,6 +77,12 @@ export async function sendTelegramNotification(data: {
             supports_streaming: true,
           }),
         });
+        if (!mediaResponse.ok) {
+          const errorText = await mediaResponse.text().catch(() => "");
+          throw new Error(
+            `Telegram API error (sendVideo): ${mediaResponse.status} ${mediaResponse.statusText}${errorText ? ` - ${errorText}` : ""}`
+          );
+        }
       }
     }
 
