@@ -19,40 +19,79 @@ export default function useCongratulation(): UseCongratulationReturn {
   const [slug, setSlug] = useState<string | null>(null);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
 
+  const isIOS = typeof navigator !== "undefined" && /iPad|iPhone|iPod/i.test(navigator.userAgent);
+
   const submitCongratulation = async (data: CongratulationFormData) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const formData = new FormData();
+      const type = data.type || "text";
 
-      if (data.type === "text") {
-        formData.append("author_name", data.author_name);
-        formData.append("type", "text");
-        if (data.message) {
-          formData.append("message", data.message);
+      let response: Response;
+
+      if (type === "text") {
+        if (isIOS) {
+          response = await new Promise<Response>((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "/api/congratulations");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onload = () => {
+              resolve(
+                new Response(xhr.responseText, {
+                  status: xhr.status,
+                  headers: { "Content-Type": xhr.getResponseHeader("Content-Type") || "" },
+                })
+              );
+            };
+            xhr.onerror = () => reject(new Error("XHR failed"));
+            xhr.send(
+              JSON.stringify({
+                author_name: data.author_name || "",
+                type: "text",
+                message: data.message || "",
+              })
+            );
+          });
+        } else {
+          response = await fetch("/api/congratulations", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              author_name: data.author_name || "",
+              type: "text",
+              message: data.message || "",
+            }),
+          });
         }
-      } else if (data.type === "audio" || data.type === "video") {
+      } else {
         if (!data.media_file) {
           throw new Error("Медиафайл обязателен");
         }
-        formData.append("author_name", data.author_name);
-        formData.append("type", data.type);
-        if (data.message) {
+        const formData = new FormData();
+        formData.append("author_name", data.author_name || "");
+        formData.append("type", type);
+        if (data.message !== undefined) {
           formData.append("message", data.message);
         }
         formData.append("media_file", data.media_file);
-      }
 
-      const response = await fetch("/api/congratulations", {
-        method: "POST",
-        body: formData,
-      });
+        response = await fetch("/api/congratulations", {
+          method: "POST",
+          body: formData,
+        });
+      }
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Ошибка при отправке поздравления");
+        const details =
+          result?.details?.fieldErrors?.media_file?.[0] ||
+          result?.details?.fieldErrors?.author_name?.[0] ||
+          result?.details?.formErrors?.[0] ||
+          result?.debug;
+        const message = details ? `${result.error || "Ошибка"}: ${details}` : result.error;
+        throw new Error(message || "Ошибка при отправке поздравления");
       }
 
       setSlug(result.slug);

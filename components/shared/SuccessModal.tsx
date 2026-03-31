@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { AnimatePresence, motion } from "framer-motion";
 import { Copy, Share2 } from "lucide-react";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { confetti } from "tsparticles-confetti";
 
 interface SuccessModalProps {
@@ -13,6 +13,21 @@ interface SuccessModalProps {
 }
 
 export default function SuccessModal({ isOpen, shareUrl, onClose }: SuccessModalProps) {
+  const [статусСообщение, установитьСтатус] = useState<string | null>(null);
+
+  const актуальнаяСсылка = useMemo(() => {
+    if (typeof window === "undefined") return shareUrl;
+    try {
+      const исходная = new URL(shareUrl);
+      const origin = window.location.origin;
+      if (исходная.hostname === "localhost" || исходная.hostname === "127.0.0.1") {
+        return `${origin}${исходная.pathname}`;
+      }
+      return shareUrl;
+    } catch {
+      return shareUrl;
+    }
+  }, [shareUrl]);
   const fireConfetti = useCallback(() => {
     const duration = 5 * 60;
     const end = Date.now() + duration;
@@ -47,10 +62,25 @@ export default function SuccessModal({ isOpen, shareUrl, onClose }: SuccessModal
 
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(shareUrl);
-      alert("Ссылка скопирована!");
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(актуальнаяСсылка);
+        установитьСтатус("Ссылка скопирована!");
+        return;
+      }
+
+      const textarea = document.createElement("textarea");
+      textarea.value = актуальнаяСсылка;
+      textarea.setAttribute("readonly", "true");
+      textarea.style.position = "absolute";
+      textarea.style.left = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(textarea);
+      установитьСтатус(ok ? "Ссылка скопирована!" : "Не удалось скопировать ссылку");
     } catch (err) {
       console.error("Failed to copy:", err);
+      установитьСтатус("Не удалось скопировать ссылку");
     }
   };
 
@@ -60,13 +90,20 @@ export default function SuccessModal({ isOpen, shareUrl, onClose }: SuccessModal
         await navigator.share({
           title: "Вадя принимает поздравления",
           text: "Посмотрите моё поздравление!",
-          url: shareUrl,
+          url: актуальнаяСсылка,
         });
+        установитьСтатус("Готово! Выберите приложение для отправки.");
       } catch (err) {
         console.error("Share failed:", err);
+        await copyToClipboard();
       }
     } else {
-      copyToClipboard();
+      await copyToClipboard();
+      установитьСтатус(
+        window.isSecureContext
+          ? "Поделиться можно через копирование ссылки."
+          : "Поделиться можно через копирование ссылки (нужен HTTPS для Web Share)."
+      );
     }
   };
 
@@ -91,7 +128,9 @@ export default function SuccessModal({ isOpen, shareUrl, onClose }: SuccessModal
             </p>
 
             <div className="bg-black/30 p-4 rounded-lg mb-6 break-all text-center text-gold">
-              {shareUrl}
+              <a className="underline" href={актуальнаяСсылка} target="_blank" rel="noreferrer">
+                {актуальнаяСсылка}
+              </a>
             </div>
 
             <div className="flex gap-3">
@@ -119,6 +158,10 @@ export default function SuccessModal({ isOpen, shareUrl, onClose }: SuccessModal
             >
               Закрыть
             </Button>
+
+            {статусСообщение && (
+              <p className="mt-3 text-center text-sm text-gray-400">{статусСообщение}</p>
+            )}
           </motion.div>
         </motion.div>
       )}

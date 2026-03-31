@@ -1,7 +1,7 @@
 "use client";
 
 import { Maximize, Pause, Play, Volume2 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface VideoPlayerProps {
   src: string;
@@ -14,6 +14,17 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
   const [volume, setVolume] = useState(1);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [useNativeControls, setUseNativeControls] = useState(false);
+  const [playbackError, setPlaybackError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof navigator === "undefined") return;
+    const ua = navigator.userAgent || "";
+    const isiOS =
+      /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    setUseNativeControls(isiOS);
+  }, []);
 
   const togglePlayback = () => {
     if (videoRef.current) {
@@ -65,7 +76,8 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    const paddedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+    return `${minutes}:${paddedSeconds}`;
   };
 
   return (
@@ -76,10 +88,13 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
         poster={poster}
         className="w-full max-h-[400px] object-contain bg-black"
         tabIndex={0}
+        playsInline
+        controls={useNativeControls}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={() => setIsPlaying(false)}
-        onClick={togglePlayback}
+        onClick={useNativeControls ? undefined : togglePlayback}
+        onError={() => setPlaybackError("Видео не поддерживается в этом браузере.")}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
@@ -91,54 +106,62 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
       </video>
 
       {/* Controls */}
-      <div className="p-3 space-y-2">
-        {/* Progress bar */}
-        <input
-          type="range"
-          min={0}
-          max={duration || 0}
-          value={currentTime}
-          onChange={handleSeek}
-          className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-gold"
-        />
+      {playbackError && (
+        <div className="p-3 text-sm text-red-300 bg-red-500/10 border-t border-red-500/30">
+          {playbackError}
+        </div>
+      )}
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={togglePlayback}
-              className="text-gold hover:text-yellow-400 transition-colors"
-            >
-              {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
-            </button>
+      {!useNativeControls && !playbackError && (
+        <div className="p-3 space-y-2">
+          {/* Progress bar */}
+          <input
+            type="range"
+            min={0}
+            max={duration || 0}
+            value={currentTime}
+            onChange={handleSeek}
+            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-gold"
+          />
 
-            <div className="flex items-center gap-2 text-sm text-gray-300">
-              <Volume2 className="w-4 h-4" />
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.1}
-                value={volume}
-                onChange={handleVolumeChange}
-                className="w-20 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-gold"
-              />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={togglePlayback}
+                className="text-gold hover:text-yellow-400 transition-colors"
+              >
+                {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+              </button>
+
+              <div className="flex items-center gap-2 text-sm text-gray-300">
+                <Volume2 className="w-4 h-4" />
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.1}
+                  value={volume}
+                  onChange={handleVolumeChange}
+                  className="w-20 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-gold"
+                />
+              </div>
+
+              <span className="text-sm text-gray-400">
+                {formatTime(currentTime)} / {formatTime(duration)}
+              </span>
             </div>
 
-            <span className="text-sm text-gray-400">
-              {formatTime(currentTime)} / {formatTime(duration)}
-            </span>
+            <button
+              type="button"
+              onClick={toggleFullscreen}
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              <Maximize className="w-5 h-5" />
+            </button>
           </div>
-
-          <button
-            type="button"
-            onClick={toggleFullscreen}
-            className="text-gray-300 hover:text-white transition-colors"
-          >
-            <Maximize className="w-5 h-5" />
-          </button>
         </div>
-      </div>
+      )}
     </div>
   );
 }

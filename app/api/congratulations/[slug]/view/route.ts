@@ -1,8 +1,9 @@
-import { supabaseAdmin } from "@/lib/supabase/server";
+import { получитьSupabaseAdmin } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
 export async function POST(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
+    const supabaseAdmin = получитьSupabaseAdmin();
     const { slug } = await params;
 
     const { data: congratulation, error } = await supabaseAdmin
@@ -16,10 +17,11 @@ export async function POST(_request: Request, { params }: { params: Promise<{ sl
       return NextResponse.json({ error: "Поздравление не найдено" }, { status: 404 });
     }
 
-    await supabaseAdmin
-      .from("congratulations")
-      .update({ views_count: congratulation.views_count + 1 })
-      .eq("id", congratulation.id);
+    const обновление = {
+      views_count: (congratulation.views_count ?? 0) + 1,
+    };
+
+    await supabaseAdmin.from("congratulations").update(обновление).eq("id", congratulation.id);
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch {

@@ -1,10 +1,14 @@
+import { convertMediaIfNeeded } from "@/lib/media/convert";
 import { проверкаЛимита } from "@/lib/rate-limit";
-import { supabaseAdmin } from "@/lib/supabase/server";
-import { uploadFile } from "@/lib/supabase/storage";
+import { получитьSupabaseAdmin } from "@/lib/supabase/server";
+import { uploadFile, проверитьMimeБакета } from "@/lib/supabase/storage";
 import { sendTelegramNotification } from "@/lib/telegram";
 import { congratulationSchema } from "@/lib/validations";
 import { nanoid } from "nanoid";
 import { type NextRequest, NextResponse } from "next/server";
+import { ZodError } from "zod";
+
+export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,19 +18,32 @@ export async function POST(request: NextRequest) {
       "unknown";
 
     const лимит = await проверкаЛимита(`rate-limit:${ip}:congratulations`);
+    const rateLimitHeaders = {
+      "X-RateLimit-Limit": лимит.limit.toString(),
+      "X-RateLimit-Remaining": лимит.remaining.toString(),
+      "X-RateLimit-Reset": лимит.reset.toString(),
+    };
+
     if (!лимит.success) {
       return NextResponse.json(
         { error: "Слишком много запросов. Попробуйте позже." },
-        { status: 429 }
+        { status: 429, headers: rateLimitHeaders }
       );
     }
 
-    const formData = await request.formData();
-    const data = Object.fromEntries(formData.entries());
+    const contentType = request.headers.get("content-type") || "";
+    let data: Record<string, unknown> = {};
+    let mediaFile: File | undefined;
+    const supabaseAdmin = получитьSupabaseAdmin();
 
-    // Convert FormData to object for validation
-    const rawMedia = formData.get("media_file");
-    const mediaFile = rawMedia instanceof File ? rawMedia : undefined;
+    if (contentType.includes("application/json")) {
+      data = (await request.json()) as Record<string, unknown>;
+    } else {
+      const formData = await request.formData();
+      data = Object.fromEntries(formData.entries());
+      const rawMedia = formData.get("media_file");
+      mediaFile = rawMedia instanceof File ? rawMedia : undefined;
+    }
 
     const validatedData = congratulationSchema.parse({
       author_name: data.author_name,
@@ -45,10 +62,63 @@ export async function POST(request: NextRequest) {
 
     // Handle media upload
     if (validatedData.media_file) {
+      const conversion = await convertMediaIfNeeded(
+        validatedData.media_file,
+        validatedData.type === "audio" ? "audio" : "video"
+      );
+      const fileToUpload = conversion.file;
       const bucket = validatedData.type === "audio" ? "audio" : "video";
-      const uploadResult = await uploadFile(validatedData.media_file, bucket);
-      media_url = uploadResult.url;
-      media_key = uploadResult.path;
+      if (validatedData.type === "audio") {
+        const проверка = await проверитьMimeБакета(bucket, [
+          "audio/m4a",
+          "audio/mp4",
+          "audio/x-m4a",
+          "audio/aac",
+          "audio/webm",
+        ]);
+        if (!проверка.ok) {
+          return NextResponse.json(
+            {
+              error: "Бакет не принимает аудио MIME-типы",
+              debug: проверка.message,
+            },
+            { status: 400 }
+          );
+        }
+      }
+      if (validatedData.type === "video") {
+        const проверка = await проверитьMimeБакета(bucket, [
+          "video/quicktime",
+          "video/mp4",
+          "video/webm",
+        ]);
+        if (!проверка.ok) {
+          return NextResponse.json(
+            {
+              error: "Бакет не принимает видео MIME-типы",
+              debug: проверка.message,
+            },
+            { status: 400 }
+          );
+        }
+      }
+      try {
+        const uploadResult = await uploadFile(fileToUpload, bucket);
+        media_url = uploadResult.url;
+        media_key = uploadResult.path;
+      } catch (uploadError) {
+        const rawMessage =
+          uploadError instanceof Error ? uploadError.message : "Ошибка загрузки файла";
+        const mimeHint = rawMessage.includes("mime type")
+          ? " Добавьте mime-тип файла в настройках бакета Supabase (например, audio/m4a, audio/mp4, audio/aac, video/mp4, video/webm)."
+          : "";
+        const message = `${rawMessage}${mimeHint}`;
+        console.error("Upload error:", uploadError);
+        return NextResponse.json(
+          { error: "Ошибка загрузки файла", debug: message },
+          { status: 500 }
+        );
+      }
 
       // Get duration for audio/video (optional, would need to read file metadata)
       // For now, we'll skip duration extraction - would need ffprobe or similar
@@ -111,16 +181,31 @@ export async function POST(request: NextRequest) {
         share_url: `${process.env.NEXT_PUBLIC_APP_URL}/congratulations/${slug}`,
         created_at: newCongratulation.created_at,
       },
-      { status: 201 }
+      { status: 201, headers: rateLimitHeaders }
     );
   } catch (error) {
+    if (error instanceof ZodError) {
+      console.error("Validation error in POST /api/congratulations:", error.flatten());
+      return NextResponse.json(
+        { error: "Неверные данные", details: error.flatten() },
+        { status: 400 }
+      );
+    }
     console.error("Error in POST /api/congratulations:", error);
-    return NextResponse.json({ error: "Неверные данные или ошибка сервера" }, { status: 400 });
+    const debugMessage = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json(
+      {
+        error: "Неверные данные или ошибка сервера",
+        debug: process.env.NODE_ENV === "production" ? undefined : debugMessage,
+      },
+      { status: 400 }
+    );
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
+    const supabaseAdmin = получитьSupabaseAdmin();
     const searchParams = request.nextUrl.searchParams;
     const page = Number.parseInt(searchParams.get("page") || "0");
     const limit = Number.parseInt(searchParams.get("limit") || "12");

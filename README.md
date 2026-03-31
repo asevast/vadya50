@@ -260,6 +260,7 @@ npm run test:e2e
 
 ## 📚 Документация
 
+- [Документ отклонений от ТЗ](docs/отклонения-от-тз.md)
 - [Next.js 15 App Router](https://nextjs.org/docs/app)
 - [Supabase JS Client](https://supabase.com/docs/reference/javascript)
 - [Framer Motion](https://www.framer.com/motion/)

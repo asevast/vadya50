@@ -11,12 +11,36 @@ interface AudioTabProps {
   form: UseFormReturn<CongratulationFormData>;
 }
 
+const getSupportedAudioMimeType = () => {
+  const candidates = [
+    "audio/mp4",
+    "audio/aac",
+    "audio/m4a",
+    "audio/webm;codecs=opus",
+    "audio/webm",
+  ];
+  if (typeof MediaRecorder === "undefined") return "";
+  for (const candidate of candidates) {
+    if (MediaRecorder.isTypeSupported(candidate)) {
+      return candidate;
+    }
+  }
+  return "";
+};
+
+const getAudioFileName = (mimeType: string) => {
+  if (mimeType.includes("mp4") || mimeType.includes("m4a")) return "audio.m4a";
+  if (mimeType.includes("aac")) return "audio.aac";
+  return "audio.webm";
+};
+
 export default function AudioTab({ form }: AudioTabProps) {
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurferRef = useRef<WaveSurfer | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize WaveSurfer when we have a URL
   useEffect(() => {
@@ -56,9 +80,20 @@ export default function AudioTab({ form }: AudioTabProps) {
 
   const handleMediaRecorded = (blob: Blob, url: string) => {
     setAudioUrl(url);
-    form.setValue("media_file", blob as File);
     // For display purposes, we'll create a file-like object
-    const file = new File([blob], "audio.webm", { type: "audio/webm" });
+    const mimeType = blob.type || "audio/webm";
+    const fileName = getAudioFileName(mimeType);
+    const file = new File([blob], fileName, { type: mimeType });
+    form.setValue("media_file", file);
+  };
+
+  const handleFile = (file: File) => {
+    if (!file.type.startsWith("audio/")) {
+      alert("Пожалуйста, выберите аудиофайл");
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setAudioUrl(url);
     form.setValue("media_file", file);
   };
 
@@ -68,6 +103,7 @@ export default function AudioTab({ form }: AudioTabProps) {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const canRecord = typeof MediaRecorder !== "undefined" && getSupportedAudioMimeType() !== "";
 
   const startRecording = async () => {
     try {
@@ -75,17 +111,23 @@ export default function AudioTab({ form }: AudioTabProps) {
       chunksRef.current = [];
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      const mimeType = getSupportedAudioMimeType();
+      if (!mimeType) {
+        for (const track of stream.getTracks()) {
+          track.stop();
+        }
+        setRecordingError("Запись аудио недоступна в этом браузере.");
+        return;
+      }
+      const mediaRecorder = new MediaRecorder(stream, { mimeType });
       mediaRecorderRef.current = mediaRecorder;
 
       mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          chunksRef.current.push(event.data);
-        }
+        chunksRef.current.push(event.data);
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        const blob = new Blob(chunksRef.current, { type: mimeType });
         const url = URL.createObjectURL(blob);
         handleMediaRecorded(blob, url);
         for (const track of stream.getTracks()) {
@@ -93,7 +135,7 @@ export default function AudioTab({ form }: AudioTabProps) {
         }
       };
 
-      mediaRecorder.start();
+      mediaRecorder.start(1000);
       setIsRecording(true);
     } catch (err) {
       setRecordingError(err instanceof Error ? err.message : "Ошибка записи");
@@ -136,15 +178,38 @@ export default function AudioTab({ form }: AudioTabProps) {
             <>
               <Button
                 type="button"
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                data-testid="audio-select"
+              >
+                Загрузить файл
+              </Button>
+              <Button
+                type="button"
                 size="lg"
                 onClick={isRecording ? stopRecording : startRecording}
+                data-testid="audio-record"
+                aria-label={isRecording ? "Остановить запись" : "Начать запись"}
                 className={`rounded-full w-16 h-16 ${isRecording ? "bg-red-500 hover:bg-red-600" : "bg-gold text-black hover:bg-yellow-400"}`}
+                disabled={!canRecord}
               >
                 {isRecording ? <Square className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
               </Button>
               <div className="text-sm text-gray-400">
-                {isRecording ? "Запись..." : "Нажмите для записи"}
+                {isRecording ? "Запись..." : "Начать запись"}
               </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="audio/*"
+                capture="user"
+                data-testid="audio-file"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFile(file);
+                }}
+                className="hidden"
+              />
             </>
           ) : (
             <>
@@ -161,6 +226,7 @@ export default function AudioTab({ form }: AudioTabProps) {
                 size="icon"
                 variant="outline"
                 onClick={clearAudio}
+                data-testid="audio-delete"
                 className="rounded-full"
               >
                 <svg
@@ -185,6 +251,12 @@ export default function AudioTab({ form }: AudioTabProps) {
           )}
         </div>
 
+        {!canRecord && (
+          <p className="text-sm text-gray-400">
+            Запись в браузере недоступна, используйте “Загрузить файл” для записи через системный
+            диктофон.
+          </p>
+        )}
         {recordingError && <p className="text-sm text-red-400">{recordingError}</p>}
       </div>
     </div>

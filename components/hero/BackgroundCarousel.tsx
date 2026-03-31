@@ -22,6 +22,7 @@ export default function ФоноваяКарусель() {
   const [слайды, установитьСлайды] = useState<СлайдФона[]>(ЗАПАСНЫЕ_СЛАЙДЫ);
   const [индекс, установитьИндекс] = useState(0);
   const [переход, установитьПереход] = useState(false);
+  const [lightImages, setLightImages] = useState(true);
   const предыдущийИндекс = useRef(0);
 
   useEffect(() => {
@@ -75,11 +76,19 @@ export default function ФоноваяКарусель() {
     return <div className="absolute inset-0" aria-hidden="true" />;
   }
 
+  const visibleIndices = Array.from(
+    new Set([индекс, предыдущийИндекс.current].filter((idx) => idx >= 0 && idx < слайды.length))
+  );
+
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-      {слайды.map((слайд, i) => {
-        const активен = i === индекс;
-        const былАктивен = i === предыдущийИндекс.current;
+    <div
+      className="absolute inset-0 overflow-hidden pointer-events-none background-carousel"
+      aria-hidden="true"
+    >
+      {visibleIndices.map((slideIndex) => {
+        const слайд = слайды[slideIndex];
+        const активен = slideIndex === индекс;
+        const былАктивен = slideIndex === предыдущийИндекс.current;
         const стиль = {
           left: `${слайд.x}%`,
           top: `${слайд.y}%`,
@@ -90,16 +99,22 @@ export default function ФоноваяКарусель() {
           filter: `blur(${слайд.blur}px)`,
         } as const;
 
+        const src = lightImages
+          ? `${слайд.src}${слайд.src.includes("?") ? "&" : "?"}w=900&q=65&format=jpeg`
+          : слайд.src;
+
         return (
           <div
             key={`${слайд.id}-${текущийId}-${предыдущийId}`}
             style={стиль}
-            className="absolute rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.35)] transition-opacity duration-[2200ms] ease-in-out"
+            className="absolute rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.35)] transition-opacity duration-[2200ms] ease-in-out background-carousel-slide"
           >
             <img
-              src={слайд.src}
+              src={src}
               alt={слайд.alt}
-              loading="lazy"
+              loading={активен ? "eager" : "lazy"}
+              decoding="async"
+              fetchPriority={активен ? "high" : "auto"}
               className="w-full h-full object-contain rounded-2xl bg-black/30"
             />
           </div>

@@ -188,6 +188,22 @@ body::after {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
+[data-tab-panel] {
+  display: none;
+}
+
+#tab-text:checked ~ form [data-tab-panel="text"] {
+  display: block;
+}
+
+#tab-audio:checked ~ form [data-tab-panel="audio"] {
+  display: block;
+}
+
+#tab-video:checked ~ form [data-tab-panel="video"] {
+  display: block;
+}
+
 /* Font variables */
 .font-display {
   font-family: var(--font-display), serif;
@@ -201,6 +217,35 @@ body::after {
 .объемный-текст {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.12), 0 2px 0 rgba(0, 0, 0, 0.25), 0 8px 18px
     rgba(0, 0, 0, 0.45), 0 18px 40px rgba(0, 0, 0, 0.55);
+}
+
+.hero-static {
+  display: block;
+}
+
+.hero-dynamic {
+  display: none;
+}
+
+.hero-dynamic-ready .hero-static {
+  display: none;
+}
+
+.hero-dynamic-ready .hero-dynamic {
+  display: block;
+}
+
+.ios .hero-static {
+  display: block;
+}
+
+.ios .hero-dynamic {
+  display: none;
+}
+
+.ios .background-carousel-slide {
+  filter: none !important;
+  box-shadow: none !important;
 }
 
 /* Smooth scrolling */
@@ -239,5 +284,19 @@ html {
   body::before,
   body::after {
     animation: none !important;
+  }
+}
+
+@media (max-height: 700px) {
+  .hero-wrapper {
+    min-height: 60vh;
+  }
+
+  .hero-grid {
+    gap: 1.5rem;
+  }
+
+  .hero-50 {
+    height: 220px;
   }
 }
