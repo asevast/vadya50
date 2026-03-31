@@ -44,7 +44,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[80vh] max-[height:700px]:min-h-[60vh] flex items-center justify-center overflow-hidden">
       {/* Particles background */}
       <div className="absolute inset-0">
         <ФоноваяКарусель />
@@ -52,7 +52,7 @@ export default function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
+      <div className="relative z-10 container mx-auto px-4 grid lg:grid-cols-2 gap-10 max-[height:700px]:gap-6 items-center">
         {/* Left column: Text and CTA */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -60,12 +60,12 @@ export default function HeroSection() {
           transition={{ duration: 0.8 }}
           className="text-center lg:text-left"
         >
-          <h1 className="text-6xl md:text-8xl font-display mb-6 text-gold объемный-текст">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display mb-4 sm:mb-6 text-gold объемный-текст leading-tight">
             Вадя принимает поздравления
           </h1>
 
           {/* Countdown */}
-          <div className="mb-8 flex flex-wrap items-end gap-4">
+          <div className="mb-6 sm:mb-8 flex flex-wrap items-end gap-4">
             <Countdown targetDate={targetDate} />
             <span className="text-sm md:text-base text-gray-300 whitespace-nowrap self-end min-w-[8ch] text-right">
               до рождения

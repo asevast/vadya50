@@ -129,8 +129,15 @@ export default function Fifty3DComponent() {
 
   if (нуженСтатичный) {
     return (
-      <div className="h-[320px] sm:h-[360px] md:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center">
-        <div className="text-[5rem] font-display" style={{ color: "#FFE8B0" }}>
+      <div className="h-[260px] sm:h-[320px] md:h-[360px] lg:h-[400px] max-[height:700px]:h-[220px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center">
+        <div
+          className="font-display text-[5.5rem] sm:text-[6.5rem] md:text-[8rem] lg:text-[9rem] text-gold"
+          style={{
+            color: "#FFE8B0",
+            textShadow:
+              "0 6px 18px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.35)",
+          }}
+        >
           50
         </div>
       </div>
@@ -138,7 +145,7 @@ export default function Fifty3DComponent() {
   }
 
   return (
-    <div className="h-[320px] sm:h-[360px] md:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent relative">
+    <div className="h-[260px] sm:h-[320px] md:h-[360px] lg:h-[400px] max-[height:700px]:h-[220px] w-full rounded-2xl overflow-hidden bg-transparent relative">
       <Canvas
         data-testid="fifty3d-canvas"
         dpr={dpr}
