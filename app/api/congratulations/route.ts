@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     if (validatedData.media_file) {
       const conversion = await convertMediaIfNeeded(
         validatedData.media_file,
-        validatedData.type
+        validatedData.type === "audio" ? "audio" : "video"
       );
       const fileToUpload = conversion.file;
       const bucket = validatedData.type === "audio" ? "audio" : "video";
