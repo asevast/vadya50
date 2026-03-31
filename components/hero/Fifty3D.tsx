@@ -3,7 +3,7 @@
 import { Center, Text3D } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Suspense, useEffect, useRef, useState } from "react";
-import type { Mesh } from "three";
+import type { Group, Mesh } from "three";
 
 function Пятьдесят({
   безАнимации,
@@ -19,35 +19,38 @@ function Пятьдесят({
   размерФаски: number;
 }) {
   const meshRef = useRef<Mesh>(null);
+  const groupRef = useRef<Group>(null);
 
   useFrame((_, delta) => {
-    if (meshRef.current && !безАнимации) {
-      meshRef.current.rotation.y += delta * 0.25;
+    if (groupRef.current && !безАнимации) {
+      groupRef.current.rotation.y += delta * 0.25;
     }
   });
 
   return (
     <Center>
-      <Text3D
-        ref={meshRef}
-        font="/fonts/helvetiker_bold.typeface.json"
-        size={размер}
-        height={высота}
-        bevelEnabled
-        bevelThickness={толщинаФаски}
-        bevelSize={размерФаски}
-        bevelSegments={6}
-        curveSegments={24}
-      >
-        50
-        <meshStandardMaterial
-          color="#FFE8B0"
-          metalness={0.9}
-          roughness={0.2}
-          emissive="#2a1f0a"
-          emissiveIntensity={0.35}
-        />
-      </Text3D>
+      <group ref={groupRef}>
+        <Text3D
+          ref={meshRef}
+          font="/fonts/helvetiker_bold.typeface.json"
+          size={размер}
+          height={высота}
+          bevelEnabled
+          bevelThickness={толщинаФаски}
+          bevelSize={размерФаски}
+          bevelSegments={6}
+          curveSegments={24}
+        >
+          50
+          <meshStandardMaterial
+            color="#FFE8B0"
+            metalness={0.9}
+            roughness={0.2}
+            emissive="#2a1f0a"
+            emissiveIntensity={0.35}
+          />
+        </Text3D>
+      </group>
     </Center>
   );
 }
@@ -133,11 +136,11 @@ export default function Fifty3DComponent() {
 
   const безДвижения = уменьшенноеДвижение || малыйЭкран || вкладкаСкрыта;
   const нуженСтатичный = !поддержкаWebGL || уменьшенноеДвижение || (lowPowerDevice && низкийFPS);
-  const размерТекста = малыйЭкран ? 2.4 : 3.8;
-  const высотаТекста = малыйЭкран ? 0.45 : 0.6;
-  const толщинаФаски = малыйЭкран ? 0.07 : 0.1;
-  const размерФаски = малыйЭкран ? 0.03 : 0.05;
-  const масштаб = малыйЭкран ? 0.95 : 1.25;
+  const размерТекста = малыйЭкран ? 1.6 : 2.2;
+  const высотаТекста = малыйЭкран ? 0.3 : 0.4;
+  const толщинаФаски = малыйЭкран ? 0.045 : 0.06;
+  const размерФаски = малыйЭкран ? 0.02 : 0.03;
+  const масштаб = малыйЭкран ? 0.7 : 0.85;
 
   if (нуженСтатичный) {
     return (
