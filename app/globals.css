@@ -203,27 +203,27 @@ body::after {
     rgba(0, 0, 0, 0.45), 0 18px 40px rgba(0, 0, 0, 0.55);
 }
 
-.герой-статичный {
+.hero-static {
   display: block;
 }
 
-.герой-динамичный {
+.hero-dynamic {
   display: none;
 }
 
-.js-ready .герой-статичный {
+.js-ready .hero-static {
   display: none;
 }
 
-.js-ready .герой-динамичный {
+.js-ready .hero-dynamic {
   display: block;
 }
 
-.ios .герой-статичный {
+.ios .hero-static {
   display: block;
 }
 
-.ios .герой-динамичный {
+.ios .hero-dynamic {
   display: none;
 }
 
@@ -267,15 +267,15 @@ html {
 }
 
 @media (max-height: 700px) {
-  .герой-обертка {
+  .hero-wrapper {
     min-height: 60vh;
   }
 
-  .герой-сетка {
+  .hero-grid {
     gap: 1.5rem;
   }
 
-  .герой-50-блок {
+  .hero-50 {
     height: 220px;
   }
 }

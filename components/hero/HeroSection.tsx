@@ -52,41 +52,11 @@ export default function HeroSection() {
   const показыватьДинамику = клиентГотов && !этоIOS;
 
   if (этоIOS) {
-    return (
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden герой-обертка">
-        <div className="relative z-10 container mx-auto px-4 grid lg:grid-cols-2 gap-8 items-center герой-сетка">
-          <div className="text-center lg:text-left">
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display mb-4 sm:mb-6 text-gold объемный-текст leading-tight">
-              Вадя принимает поздравления
-            </h1>
-            <div className="mb-6 sm:mb-8 flex flex-wrap items-end gap-4">
-              <Countdown targetDate={targetDate} />
-              <span className="text-sm md:text-base text-gray-300 whitespace-nowrap self-end min-w-[8ch] text-right">
-                до рождения
-              </span>
-            </div>
-            <Button
-              size="lg"
-              className="bg-gold text-black hover:bg-yellow-400 text-lg px-8 py-6"
-              onClick={() => {
-                document.getElementById("congratulation-form")?.scrollIntoView({
-                  behavior: "smooth",
-                });
-              }}
-            >
-              Поздравить
-            </Button>
-          </div>
-          <div className="flex justify-center">
-            <Статичный50 />
-          </div>
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden герой-обертка герой-динамичный">
+    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden hero-wrapper hero-dynamic">
       {/* Particles background */}
       <div className="absolute inset-0">
         <ФоноваяКарусель />
@@ -94,7 +64,7 @@ export default function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 grid lg:grid-cols-2 gap-10 items-center герой-сетка">
+      <div className="relative z-10 container mx-auto px-4 grid lg:grid-cols-2 gap-10 items-center hero-grid">
         {/* Left column: Text and CTA */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -150,7 +120,7 @@ export default function HeroSection() {
 
 function Статичный50() {
   return (
-    <div className="h-[260px] sm:h-[320px] md:h-[360px] lg:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center герой-50-блок">
+          <div className="h-[260px] sm:h-[320px] md:h-[360px] lg:h-[400px] w-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center hero-50">
       <div
         className="font-display text-[5.5rem] sm:text-[6.5rem] md:text-[8rem] lg:text-[9rem] text-gold"
         style={{
