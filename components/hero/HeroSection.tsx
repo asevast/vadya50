@@ -22,9 +22,11 @@ export default function HeroSection() {
   // Target: April 2, 2026 10:00 GMT+3 (MSK)
   const targetDate = new Date("2026-04-02T10:00:00+03:00");
   const [безТяжелыхЭффектов, установитьБезТяжелыхЭффектов] = useState(false);
-  const [этоIOS, установитьЭтоIOS] = useState(false);
+  const [этоIOS, установитьЭтоIOS] = useState(true);
+  const [клиентГотов, установитьКлиентГотов] = useState(false);
 
   useEffect(() => {
+    установитьКлиентГотов(true);
     const агент = typeof navigator !== "undefined" ? navigator.userAgent : "";
     const ios = /iPad|iPhone|iPod/i.test(агент);
     const уменьшенноеДвижение =
@@ -46,6 +48,8 @@ export default function HeroSection() {
       установитьБезТяжелыхЭффектов(true);
     }
   }, []);
+
+  const показыватьДинамику = клиентГотов && !этоIOS;
 
   if (этоIOS) {
     return (
@@ -86,7 +90,7 @@ export default function HeroSection() {
       {/* Particles background */}
       <div className="absolute inset-0">
         <ФоноваяКарусель />
-        {!безТяжелыхЭффектов && <ParticlesBackground />}
+        {показыватьДинамику && !безТяжелыхЭффектов && <ParticlesBackground />}
       </div>
 
       {/* Content */}
@@ -131,12 +135,12 @@ export default function HeroSection() {
           transition={{ duration: 0.8 }}
           className="flex justify-center"
         >
-          {этоIOS ? (
-            <Статичный50 />
-          ) : (
+          {показыватьДинамику ? (
             <ГраницаОшибки3D fallback={<Статичный50 />}>
               <Fifty3DComponent />
             </ГраницаОшибки3D>
+          ) : (
+            <Статичный50 />
           )}
         </motion.div>
       </div>

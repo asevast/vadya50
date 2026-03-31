@@ -21,43 +21,6 @@ export default function TextTab({ form }: TextTabProps) {
     }
   }, []);
 
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content: form.getValues("message") || "",
-    immediatelyRender: false,
-    editorProps: {
-      attributes: {
-        "data-testid": "message-editor",
-        "aria-label": "Текст поздравления",
-      },
-    },
-    onUpdate: ({ editor }) => {
-      // For plain text, strip HTML tags
-      const plainText = editor.getText();
-      form.setValue("message", plainText);
-    },
-  });
-
-  const focusEditor = () => {
-    if (!useRichEditor) return;
-    editor?.chain().focus().run();
-  };
-
-  // Sync with form reset
-  useEffect(() => {
-    if (!useRichEditor) return;
-    const subscription = form.watch((value, { name }) => {
-      if (name === "message" && editor) {
-        const nextValue = value.message || "";
-        if (nextValue !== editor.getText()) {
-          editor.commands.setContent(nextValue);
-        }
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [editor, form, useRichEditor]);
-
   return (
     <div className="space-y-4">
       <div>
@@ -65,14 +28,8 @@ export default function TextTab({ form }: TextTabProps) {
           Текст поздравления
         </label>
         <div className="border border-gray-700 rounded-lg overflow-hidden bg-black/30">
-          {editor && useRichEditor ? (
-            <div onClick={focusEditor} onKeyDown={focusEditor}>
-              <EditorContent
-                editor={editor}
-                id="message-input"
-                className="prose prose-invert max-w-none p-4 min-h-[200px] focus:outline-none"
-              />
-            </div>
+          {useRichEditor ? (
+            <RichTextEditor form={form} />
           ) : (
             <textarea
               {...form.register("message")}
@@ -90,6 +47,63 @@ export default function TextTab({ form }: TextTabProps) {
           {form.getValues("message")?.length || 0}/2000
         </p>
       </div>
+    </div>
+  );
+}
+
+function RichTextEditor({ form }: { form: UseFormReturn<CongratulationFormData> }) {
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content: form.getValues("message") || "",
+    immediatelyRender: false,
+    editorProps: {
+      attributes: {
+        "data-testid": "message-editor",
+        "aria-label": "Текст поздравления",
+      },
+    },
+    onUpdate: ({ editor }) => {
+      const plainText = editor.getText();
+      form.setValue("message", plainText);
+    },
+  });
+
+  const focusEditor = () => {
+    editor?.chain().focus().run();
+  };
+
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "message" && editor) {
+        const nextValue = value.message || "";
+        if (nextValue !== editor.getText()) {
+          editor.commands.setContent(nextValue);
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [editor, form]);
+
+  if (!editor) {
+    return (
+      <textarea
+        {...form.register("message")}
+        id="message-input"
+        data-testid="message-editor"
+        className="w-full p-4 min-h-[200px] bg-transparent focus:outline-none"
+        placeholder="Введите текст поздравления"
+      />
+    );
+  }
+
+  return (
+    <div onClick={focusEditor} onKeyDown={focusEditor}>
+      <EditorContent
+        editor={editor}
+        id="message-input"
+        className="prose prose-invert max-w-none p-4 min-h-[200px] focus:outline-none"
+      />
     </div>
   );
 }
