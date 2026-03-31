@@ -203,6 +203,22 @@ body::after {
     rgba(0, 0, 0, 0.45), 0 18px 40px rgba(0, 0, 0, 0.55);
 }
 
+.герой-статичный {
+  display: block;
+}
+
+.герой-динамичный {
+  display: none;
+}
+
+.js-ready .герой-статичный {
+  display: none;
+}
+
+.js-ready .герой-динамичный {
+  display: block;
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;

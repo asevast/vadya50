@@ -82,7 +82,7 @@ export default function HeroSection() {
   }
 
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden герой-обертка">
+    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden герой-обертка герой-динамичный">
       {/* Particles background */}
       <div className="absolute inset-0">
         <ФоноваяКарусель />

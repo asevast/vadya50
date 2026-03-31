@@ -80,7 +80,14 @@ export default function CongratulationForm() {
           ))}
         </div>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-6">
+        <form
+          action="/api/congratulations"
+          method="post"
+          encType="multipart/form-data"
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6 mt-6"
+        >
+          <input type="hidden" name="type" value={activeTab} />
           {/* Author name - common for all types */}
           <div>
             <label htmlFor="author_name" className="block text-sm font-medium mb-2">

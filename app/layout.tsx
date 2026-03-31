@@ -22,7 +22,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" className={cn("dark font-sans", geist.variable)}>
-      <body className={`${geist.variable} ${playfair.variable} antialiased`}>{children}</body>
+      <body className={`${geist.variable} ${playfair.variable} antialiased`}>
+        <script
+          // Добавляем класс, чтобы скрывать статичный hero после запуска JS
+          dangerouslySetInnerHTML={{
+            __html: "document.documentElement.classList.add('js-ready');",
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
