@@ -71,9 +71,6 @@ export default function CongratulationForm() {
               role="tab"
               aria-selected={activeTab === tab.key}
               onClick={() => setActiveTab(tab.key)}
-              onPointerUp={() => setActiveTab(tab.key)}
-              onMouseDown={() => setActiveTab(tab.key)}
-              onTouchStart={() => setActiveTab(tab.key)}
               data-testid={`tab-${tab.key}`}
               className={cn(
                 "relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center rounded-md px-1.5 py-0.5 text-sm font-medium transition-all",
@@ -143,30 +140,6 @@ export default function CongratulationForm() {
               type="submit"
               disabled={form.formState.isSubmitting}
               data-testid="submit-button"
-              onClick={
-                этоIOS
-                  ? undefined
-                  : (event) => {
-                      event.preventDefault();
-                      form.handleSubmit(onSubmit)();
-                    }
-              }
-              onPointerUp={
-                этоIOS
-                  ? undefined
-                  : (event) => {
-                      event.preventDefault();
-                      form.handleSubmit(onSubmit)();
-                    }
-              }
-              onTouchEnd={
-                этоIOS
-                  ? undefined
-                  : (event) => {
-                      event.preventDefault();
-                      form.handleSubmit(onSubmit)();
-                    }
-              }
               className="flex-1 rounded-lg bg-gold text-black hover:bg-yellow-400 text-lg py-6 transition-colors disabled:opacity-50 disabled:pointer-events-none"
             >
               {form.formState.isSubmitting ? "Отправка..." : "Отправить"}
