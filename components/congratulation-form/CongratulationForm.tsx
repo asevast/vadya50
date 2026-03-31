@@ -102,6 +102,7 @@ export default function CongratulationForm() {
             <input
               {...form.register("author_name")}
               id="author_name"
+              name="author_name"
               className="w-full px-4 py-3 bg-black/30 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold"
               placeholder="Введите ваше имя"
             />

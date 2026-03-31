@@ -30,6 +30,13 @@ export default function RootLayout({
               "document.documentElement.classList.add('js-ready');if(/iPad|iPhone|iPod/i.test(navigator.userAgent)){document.documentElement.classList.add('ios');}",
           }}
         />
+        <script
+          // Легкий счетчик для статичного hero, работает даже без React-гидрации
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){var root=document.querySelector('[data-countdown-root]');if(!root)return;var target=new Date('2026-04-02T10:00:00+03:00').getTime();var pad=function(n){return String(n).padStart(2,'0');};var tick=function(){var now=Date.now();var diff=target-now;if(diff<0){diff=0;}var days=Math.floor(diff/86400000);var hours=Math.floor(diff/3600000)%24;var minutes=Math.floor(diff/60000)%60;var seconds=Math.floor(diff/1000)%60;var ms=Math.floor((diff%1000)/10);var set=function(key,val){var el=root.querySelector('[data-countdown=\"'+key+'\"]');if(el){el.textContent=pad(val);} };set('days',days);set('hours',hours);set('minutes',minutes);set('seconds',seconds);set('ms',ms);};tick();setInterval(tick,50);})();",
+          }}
+        />
         {children}
       </body>
     </html>

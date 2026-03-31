@@ -11,13 +11,13 @@ interface TextTabProps {
 }
 
 export default function TextTab({ form }: TextTabProps) {
-  const [useRichEditor, setUseRichEditor] = useState(true);
+  const [useRichEditor, setUseRichEditor] = useState(false);
 
   useEffect(() => {
     if (typeof navigator === "undefined") return;
     const ua = navigator.userAgent || "";
-    if (/iPad|iPhone|iPod/i.test(ua)) {
-      setUseRichEditor(false);
+    if (!/iPad|iPhone|iPod/i.test(ua)) {
+      setUseRichEditor(true);
     }
   }, []);
 
@@ -34,6 +34,7 @@ export default function TextTab({ form }: TextTabProps) {
             <textarea
               {...form.register("message")}
               id="message-input"
+              name="message"
               data-testid="message-editor"
               className="w-full p-4 min-h-[200px] bg-transparent focus:outline-none"
               placeholder="Введите текст поздравления"
@@ -90,6 +91,7 @@ function RichTextEditor({ form }: { form: UseFormReturn<CongratulationFormData> 
       <textarea
         {...form.register("message")}
         id="message-input"
+        name="message"
         data-testid="message-editor"
         className="w-full p-4 min-h-[200px] bg-transparent focus:outline-none"
         placeholder="Введите текст поздравления"
