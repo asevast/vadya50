@@ -2,7 +2,7 @@ name: supabase-selfhosted
 
 services:
   db:
-    image: supabase/postgres:latest
+    image: supabase/postgres:15.8.1.085
     restart: unless-stopped
     ports:
       - "${DB_PORT:-5432}:5432"
@@ -15,7 +15,7 @@ services:
       - ../../supabase/migrations:/docker-entrypoint-initdb.d
 
   auth:
-    image: supabase/gotrue:latest
+    image: supabase/gotrue:v2.186.0
     restart: unless-stopped
     depends_on:
       - db
@@ -33,7 +33,7 @@ services:
       GOTRUE_MAILER_AUTOCONFIRM: "true"
 
   rest:
-    image: supabase/postgrest:latest
+    image: postgrest/postgrest:v14.6
     restart: unless-stopped
     depends_on:
       - db
@@ -44,7 +44,7 @@ services:
       PGRST_JWT_SECRET: ${JWT_SECRET}
 
   realtime:
-    image: supabase/realtime:latest
+    image: supabase/realtime:v2.76.5
     restart: unless-stopped
     depends_on:
       - db
@@ -58,7 +58,7 @@ services:
       PORT: 4000
 
   storage:
-    image: supabase/storage-api:latest
+    image: supabase/storage-api:v1.44.2
     restart: unless-stopped
     depends_on:
       - db
@@ -88,7 +88,7 @@ services:
       PG_META_DB_USER: postgres
 
   studio:
-    image: supabase/studio:latest
+    image: supabase/studio:2026.03.16-sha-5528817
     restart: unless-stopped
     depends_on:
       - kong
@@ -100,7 +100,7 @@ services:
       SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
 
   kong:
-    image: kong:2.8
+    image: kong/kong:3.9.1
     restart: unless-stopped
     depends_on:
       - auth
