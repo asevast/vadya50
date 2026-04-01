@@ -76,7 +76,7 @@ services:
       - supabase-storage:/var/lib/storage
 
   meta:
-    image: supabase/postgres-meta:latest
+    image: supabase/postgres-meta:v0.95.2
     restart: unless-stopped
     depends_on:
       - db
