@@ -20,6 +20,7 @@ services:
     depends_on:
       - db
     environment:
+      API_EXTERNAL_URL: ${API_EXTERNAL_URL}
       GOTRUE_API_HOST: 0.0.0.0
       GOTRUE_API_PORT: 9999
       GOTRUE_DB_DRIVER: postgres
