@@ -43,7 +43,8 @@ export const convertMediaIfNeeded = async (
   inputFile: File,
   kind: "audio" | "video"
 ): Promise<ConvertResult> => {
-  if (!isWebm(inputFile)) {
+  const shouldConvert = kind === "video" ? true : isWebm(inputFile);
+  if (!shouldConvert) {
     return { file: inputFile, converted: false };
   }
 
