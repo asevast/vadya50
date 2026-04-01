@@ -9,14 +9,39 @@ type ConvertResult = {
   converted: boolean;
 };
 
-const runFfmpeg = async (args: string[]) => {
-  if (!ffmpegPath) {
-    throw new Error("ffmpeg binary not found");
+const resolveFfmpegPath = async () => {
+  const platformBinary = process.platform === "win32" ? "ffmpeg.exe" : "ffmpeg";
+  const candidates = [
+    process.env.FFMPEG_PATH,
+    ffmpegPath ?? undefined,
+    join(process.cwd(), "node_modules", "ffmpeg-static", platformBinary),
+  ].filter(Boolean) as string[];
+
+  for (const candidate of candidates) {
+    try {
+      await fs.access(candidate);
+      return candidate;
+    } catch {
+      // continue
+    }
   }
 
+  return null;
+};
+
+const runFfmpeg = async (args: string[]) => {
+  const resolvedPath = await resolveFfmpegPath();
+  const command = resolvedPath ?? process.env.FFMPEG_PATH ?? "ffmpeg";
+
   await new Promise<void>((resolve, reject) => {
-    const proc = spawn(ffmpegPath as string, args, { stdio: "ignore" });
-    proc.on("error", reject);
+    const proc = spawn(command, args, { stdio: "ignore" });
+    proc.on("error", (error) => {
+      if (!resolvedPath && !process.env.FFMPEG_PATH) {
+        reject(new Error("ffmpeg binary not found. Install ffmpeg or set FFMPEG_PATH."));
+        return;
+      }
+      reject(error);
+    });
     proc.on("close", (code) => {
       if (code === 0) resolve();
       else reject(new Error(`ffmpeg exited with code ${code}`));
