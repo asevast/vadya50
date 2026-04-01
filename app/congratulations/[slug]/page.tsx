@@ -5,8 +5,9 @@ import ViewCounterBeacon from "@/components/shared/ViewCounterBeacon";
 import { Card, CardContent } from "@/components/ui/card";
 import { получитьSupabaseAdmin } from "@/lib/supabase/server";
 import type { Database } from "@/types/supabase";
-import { Calendar, User } from "lucide-react";
+import { Calendar, Home, User } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface PageProps {
@@ -67,24 +68,34 @@ export default async function CongratulationsPage({ params }: PageProps) {
         <Card className="bg-background-primary border-gold/30">
           <CardContent className="p-8">
             {/* Header */}
-            <div className="mb-8">
-              <div className="flex items-center gap-2 text-gold mb-4">
-                <User className="w-5 h-5" />
-                <span className="font-medium">{поздравление.author_name}</span>
+            <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-gold mb-4">
+                  <User className="w-5 h-5" />
+                  <span className="font-medium">{поздравление.author_name}</span>
+                </div>
+
+                <div className="flex items-center gap-2 text-gray-400 text-sm">
+                  <Calendar className="w-4 h-4" />
+                  <span>
+                    {new Date(поздравление.created_at).toLocaleDateString("ru-RU", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </span>
+                  <span className="mx-2">•</span>
+                  <span>{поздравление.views_count} просмотров</span>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2 text-gray-400 text-sm">
-                <Calendar className="w-4 h-4" />
-                <span>
-                  {new Date(поздравление.created_at).toLocaleDateString("ru-RU", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </span>
-                <span className="mx-2">•</span>
-                <span>{поздравление.views_count} просмотров</span>
-              </div>
+              <Link
+                href="/"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-gold/40 bg-black/30 px-4 py-2 text-sm font-medium text-gold transition hover:border-gold hover:bg-black/40"
+              >
+                <Home className="h-4 w-4" />
+                Домой
+              </Link>
             </div>
 
             {/* Content based on type */}
