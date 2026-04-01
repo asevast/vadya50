@@ -23,7 +23,8 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
     const isiOS =
       /iPad|iPhone|iPod/.test(ua) ||
       (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-    setUseNativeControls(isiOS);
+    const isAndroid = /Android/i.test(ua);
+    setUseNativeControls(isiOS || isAndroid);
   }, []);
 
   const togglePlayback = () => {
@@ -31,7 +32,14 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
       if (isPlaying) {
         videoRef.current.pause();
       } else {
-        videoRef.current.play();
+        const result = videoRef.current.play();
+        if (result && typeof result.catch === "function") {
+          result.catch((error: unknown) => {
+            setPlaybackError(
+              error instanceof Error ? error.message : "Не удалось начать воспроизведение."
+            );
+          });
+        }
       }
       setIsPlaying(!isPlaying);
     }
@@ -80,6 +88,21 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
     return `${minutes}:${paddedSeconds}`;
   };
 
+  const getMediaErrorMessage = (code?: number) => {
+    switch (code) {
+      case 1:
+        return "Воспроизведение было прервано.";
+      case 2:
+        return "Ошибка сети при загрузке видео.";
+      case 3:
+        return "Ошибка декодирования видео.";
+      case 4:
+        return "Формат видео не поддерживается.";
+      default:
+        return "Видео не поддерживается в этом браузере.";
+    }
+  };
+
   return (
     <div className="bg-black/30 rounded-lg overflow-hidden">
       <video
@@ -90,11 +113,15 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
         tabIndex={0}
         playsInline
         controls={useNativeControls}
+        preload="metadata"
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={() => setIsPlaying(false)}
         onClick={useNativeControls ? undefined : togglePlayback}
-        onError={() => setPlaybackError("Видео не поддерживается в этом браузере.")}
+        onError={() => {
+          const code = videoRef.current?.error?.code;
+          setPlaybackError(getMediaErrorMessage(code));
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
