@@ -18,6 +18,13 @@ CREATE TABLE congratulations (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Grant access to Supabase roles
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role, postgres;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role, postgres;
+GRANT SELECT, INSERT ON congratulations TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON congratulations TO authenticated;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
+
 -- Create indexes
 CREATE INDEX idx_congratulations_slug ON congratulations(slug);
 CREATE INDEX idx_congratulations_type ON congratulations(type);
