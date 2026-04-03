@@ -1,6 +1,6 @@
 import { получитьSupabaseAdmin } from "./server";
 
-const BUCKETS = {
+export const BUCKETS = {
   audio: "congratulations-audio",
   video: "congratulations-video",
 } as const;

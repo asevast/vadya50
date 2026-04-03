@@ -1,11 +1,19 @@
+import { получитьSupabaseAdmin } from "./supabase/server";
+import { BUCKETS } from "./supabase/storage";
+
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHANNEL_ID = process.env.TELEGRAM_CHANNEL_ID;
+
+function getBucket(type: "audio" | "video"): string {
+  return BUCKETS[type];
+}
 
 export async function sendTelegramNotification(data: {
   type: "text" | "audio" | "video";
   authorName: string;
   message?: string;
   mediaUrl?: string;
+  mediaKey?: string;
   shareUrl: string;
 }) {
   if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHANNEL_ID) {
@@ -48,41 +56,44 @@ export async function sendTelegramNotification(data: {
       shareUrl: data.shareUrl,
     });
 
-    // If media URL exists, also send it as media
-    if (data.mediaUrl && data.type !== "text") {
-      if (data.type === "audio") {
-        const mediaResponse = await fetch(`${apiUrl}/sendAudio`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHANNEL_ID,
-            audio: data.mediaUrl,
-            caption: `Аудио-поздравление от ${data.authorName}`,
-          }),
-        });
-        if (!mediaResponse.ok) {
-          const errorText = await mediaResponse.text().catch(() => "");
-          throw new Error(
-            `Telegram API error (sendAudio): ${mediaResponse.status} ${mediaResponse.statusText}${errorText ? ` - ${errorText}` : ""}`
-          );
-        }
-      } else if (data.type === "video") {
-        const mediaResponse = await fetch(`${apiUrl}/sendVideo`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHANNEL_ID,
-            video: data.mediaUrl,
-            caption: `Видео-поздравление от ${data.authorName}`,
-            supports_streaming: true,
-          }),
-        });
-        if (!mediaResponse.ok) {
-          const errorText = await mediaResponse.text().catch(() => "");
-          throw new Error(
-            `Telegram API error (sendVideo): ${mediaResponse.status} ${mediaResponse.statusText}${errorText ? ` - ${errorText}` : ""}`
-          );
-        }
+    if (data.mediaKey && data.mediaUrl && data.type !== "text") {
+      const supabaseAdmin = получитьSupabaseAdmin();
+      const bucket = getBucket(data.type);
+
+      const { data: fileData, error: downloadError } = await supabaseAdmin.storage
+        .from(bucket)
+        .download(data.mediaKey);
+
+      if (downloadError) {
+        console.error("Failed to download media from Supabase:", downloadError);
+        return { success: true };
+      }
+
+      const formData = new FormData();
+      formData.append("chat_id", TELEGRAM_CHANNEL_ID);
+      formData.append(
+        "caption",
+        `${data.type === "audio" ? "Аудио" : "Видео"}-поздравление от ${data.authorName}`
+      );
+
+      const ext = data.mediaKey.split(".").pop() || (data.type === "audio" ? "mp3" : "mp4");
+      const fileName = `congratulation.${ext}`;
+      const blob = new Blob([fileData], {
+        type: data.type === "audio" ? "audio/mpeg" : "video/mp4",
+      });
+      formData.append(data.type === "audio" ? "audio" : "video", blob, fileName);
+
+      const endpoint = data.type === "audio" ? "sendAudio" : "sendVideo";
+      const mediaResponse = await fetch(`${apiUrl}/${endpoint}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!mediaResponse.ok) {
+        const errorText = await mediaResponse.text().catch(() => "");
+        throw new Error(
+          `Telegram API error (${endpoint}): ${mediaResponse.status} ${mediaResponse.statusText}${errorText ? ` - ${errorText}` : ""}`
+        );
       }
     }
 

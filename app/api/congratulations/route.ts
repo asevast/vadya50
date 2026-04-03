@@ -170,6 +170,7 @@ export async function POST(request: NextRequest) {
       authorName: validatedData.author_name,
       message: validatedData.message,
       mediaUrl: media_url || undefined,
+      mediaKey: media_key || undefined,
       shareUrl: `${process.env.NEXT_PUBLIC_APP_URL}/congratulations/${slug}`,
     };
     sendTelegramNotification(telegramMessage).catch(console.error);
