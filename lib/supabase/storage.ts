@@ -7,8 +7,16 @@ const BUCKETS = {
 
 const кэшMimeПроверок = new Map<string, { ok: boolean; message?: string }>();
 
+function sanitizeFileName(name: string): string {
+  return name
+    .replace(/[()]/g, "")
+    .replace(/\s+/g, "_")
+    .replace(/[^a-zA-Z0-9а-яА-ЯёЁ._-]/g, "");
+}
+
 export async function uploadFile(file: File, bucket: keyof typeof BUCKETS, path?: string) {
-  const fileName = `${Date.now()}_${file.name}`;
+  const safeName = sanitizeFileName(file.name);
+  const fileName = `${Date.now()}_${safeName}`;
   const filePath = path ? `${path}/${fileName}` : fileName;
   const contentType = file.type || undefined;
 
